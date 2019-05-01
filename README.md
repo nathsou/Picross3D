@@ -2,7 +2,7 @@
 
 3d [nonograms](https://www.wikiwand.com/en/Nonogram) in the browser
 
-![Demo puzzle](res/imgs/chair.png)
+[<img src='res/imgs/chair.png' alt='Demo puzzle' width='400'/>](https://nathsou.github.io/Picross3D/dist/index.html)
 
 # How to play?
 
@@ -24,19 +24,19 @@ There are three types of hints :
 
 ### Simple hints
 
-<img src='res/imgs/simple_hint.png' alt='Simple hint' width='64'>
+<img src='res/imgs/simple_hint.png' alt='Simple hint' width='64'/>
 
 Indicates that there are 4 consecutive blocks in the line.
 
 ### Circle hints
 
-<img src='res/imgs/circle_hint.png' alt='Circle hint' width='64'>
+<img src='res/imgs/circle_hint.png' alt='Circle hint' width='64'/>
 
 Indicates that there are 3 blocks in the line, split in 2 groups exactly. 
 
 ### Square hints
 
-<img src='res/imgs/square_hint.png' alt='Square hint' width='64'>
+<img src='res/imgs/square_hint.png' alt='Square hint' width='64'/>
 
 Indicates that there are 5 blocks in the line, split in at least 3 groups.
 
