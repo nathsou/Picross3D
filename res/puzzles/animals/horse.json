@@ -1,0 +1,45 @@
+{
+    "name": "Horse",
+    "dims": [4, 4, 1],
+    "hints": [
+        [
+            [{
+                "num": 2,
+                "type": 1
+            }],
+            [{
+                "num": 3,
+                "type": 0
+            }],
+            [{
+                "num": 1,
+                "type": 0
+            }],
+            [{
+                "num": 2,
+                "type": 0
+            }]
+        ],
+        [
+            [{
+                "num": 2,
+                "type": 0
+            }],
+            [{
+                "num": 1,
+                "type": 0
+            }],
+            [null],
+            [{
+                "num": 1,
+                "type": 0
+            }]
+        ],
+        [
+            [null, null, null, null],
+            [null, null, null, null],
+            [null, null, null, null],
+            [null, null, null, null]
+        ]
+    ]
+}

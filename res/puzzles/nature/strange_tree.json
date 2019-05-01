@@ -1,0 +1,202 @@
+{
+    "name": "Strange Tree",
+    "dims": [5, 9, 5],
+    "hints": [
+        [
+            [null, null, {
+                "num": 1,
+                "type": 0
+            }, null, null],
+            [null, null, {
+                "num": 1,
+                "type": 0
+            }, null, null],
+            [null, null, {
+                "num": 1,
+                "type": 0
+            }, null, null],
+            [null, null, {
+                "num": 1,
+                "type": 0
+            }, null, null],
+            [null, null, null, null, null],
+            [null, null, null, null, null],
+            [{
+                "num": 3,
+                "type": 0
+            }, null, null, null, {
+                "num": 3,
+                "type": 0
+            }],
+            [null, null, null, null, null],
+            [null, {
+                "num": 1,
+                "type": 0
+            }, null, {
+                "num": 1,
+                "type": 0
+            }, null]
+        ],
+        [
+            [null, {
+                "num": 1,
+                "type": 0
+            }, {
+                "num": 3,
+                "type": 0
+            }, {
+                "num": 1,
+                "type": 0
+            }, null],
+            [{
+                "num": 1,
+                "type": 0
+            }, {
+                "num": 3,
+                "type": 0
+            }, {
+                "num": 5,
+                "type": 0
+            }, {
+                "num": 3,
+                "type": 0
+            }, {
+                "num": 1,
+                "type": 0
+            }],
+            [{
+                "num": 3,
+                "type": 0
+            }, null, null, null, {
+                "num": 3,
+                "type": 0
+            }],
+            [{
+                "num": 1,
+                "type": 0
+            }, {
+                "num": 3,
+                "type": 0
+            }, {
+                "num": 5,
+                "type": 0
+            }, {
+                "num": 3,
+                "type": 0
+            }, {
+                "num": 1,
+                "type": 0
+            }],
+            [null, {
+                "num": 1,
+                "type": 0
+            }, {
+                "num": 3,
+                "type": 0
+            }, {
+                "num": 1,
+                "type": 0
+            }, null]
+        ],
+        [
+            [{
+                "num": 0,
+                "type": 0
+            }, {
+                "num": 0,
+                "type": 0
+            }, {
+                "num": 0,
+                "type": 0
+            }, {
+                "num": 0,
+                "type": 0
+            }, {
+                "num": 0,
+                "type": 0
+            }, {
+                "num": 1,
+                "type": 0
+            }, {
+                "num": 3,
+                "type": 0
+            }, {
+                "num": 1,
+                "type": 0
+            }, {
+                "num": 0,
+                "type": 0
+            }],
+            [null, null, null, null, null, null, null, {
+                "num": 3,
+                "type": 0
+            }, {
+                "num": 1,
+                "type": 0
+            }],
+            [{
+                "num": 1,
+                "type": 0
+            }, {
+                "num": 1,
+                "type": 0
+            }, {
+                "num": 1,
+                "type": 0
+            }, {
+                "num": 1,
+                "type": 0
+            }, {
+                "num": 3,
+                "type": 0
+            }, {
+                "num": 5,
+                "type": 0
+            }, {
+                "num": 5,
+                "type": 0
+            }, {
+                "num": 5,
+                "type": 0
+            }, {
+                "num": 3,
+                "type": 0
+            }],
+            [null, null, null, null, null, null, null, {
+                "num": 3,
+                "type": 0
+            }, {
+                "num": 1,
+                "type": 0
+            }],
+            [{
+                "num": 0,
+                "type": 0
+            }, {
+                "num": 0,
+                "type": 0
+            }, {
+                "num": 0,
+                "type": 0
+            }, {
+                "num": 0,
+                "type": 0
+            }, {
+                "num": 0,
+                "type": 0
+            }, {
+                "num": 1,
+                "type": 0
+            }, {
+                "num": 3,
+                "type": 0
+            }, {
+                "num": 1,
+                "type": 0
+            }, {
+                "num": 0,
+                "type": 0
+            }]
+        ]
+    ]
+}

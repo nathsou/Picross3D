@@ -1,0 +1,48 @@
+{
+    "name": "Simple hints",
+    "dims": [3, 3, 1],
+    "hints": [
+        [
+            [{
+                "num": 1,
+                "type": 0
+            }],
+            [null],
+            [{
+                "num": 1,
+                "type": 0
+            }]
+        ],
+        [
+            [{
+                "num": 1,
+                "type": 0
+            }],
+            [null],
+            [{
+                "num": 1,
+                "type": 0
+            }]
+        ],
+        [
+            [{
+                "num": 0,
+                "type": 0
+            }, null, {
+                "num": 0,
+                "type": 0
+            }],
+            [null, {
+                "num": 1,
+                "type": 0
+            }, null],
+            [{
+                "num": 0,
+                "type": 0
+            }, null, {
+                "num": 0,
+                "type": 0
+            }]
+        ]
+    ]
+}

@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "removeComments": true,
+        "allowJs": true,
+        "noImplicitAny": true,
+        "outDir": "./dist",
+        "lib": ["webworker", "es2016", "dom"]
+    },
+    "exclude": [
+        "node_modules"
+    ]
+}

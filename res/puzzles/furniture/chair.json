@@ -1,0 +1,147 @@
+{
+    "dims": [4, 7, 4],
+    "hints": [
+        [
+            [null, null, null, null],
+            [null, null, null, null],
+            [null, null, null, null],
+            [null, null, null, null],
+            [null, null, null, null],
+            [null, null, null, null],
+            [null, null, null, null]
+        ],
+        [
+            [{
+                "num": 3,
+                "type": 0
+            }, {
+                "num": 1,
+                "type": 0
+            }, {
+                "num": 1,
+                "type": 0
+            }, null],
+            [{
+                "num": 1,
+                "type": 0
+            }, {
+                "num": 1,
+                "type": 0
+            }, {
+                "num": 1,
+                "type": 0
+            }, {
+                "num": 5,
+                "type": 0
+            }],
+            [{
+                "num": 1,
+                "type": 0
+            }, {
+                "num": 1,
+                "type": 0
+            }, {
+                "num": 1,
+                "type": 0
+            }, {
+                "num": 5,
+                "type": 0
+            }],
+            [{
+                "num": 3,
+                "type": 0
+            }, {
+                "num": 1,
+                "type": 0
+            }, {
+                "num": 1,
+                "type": 0
+            }, null]
+        ],
+        [
+            [{
+                "num": 2,
+                "type": 1
+            }, {
+                "num": 2,
+                "type": 1
+            }, {
+                "num": 4,
+                "type": 0
+            }, {
+                "num": 1,
+                "type": 0
+            }, {
+                "num": 1,
+                "type": 0
+            }, {
+                "num": 1,
+                "type": 0
+            }, {
+                "num": 1,
+                "type": 0
+            }],
+            [{
+                "num": 0,
+                "type": 0
+            }, {
+                "num": 0,
+                "type": 0
+            }, null, {
+                "num": 1,
+                "type": 0
+            }, {
+                "num": 1,
+                "type": 0
+            }, {
+                "num": 1,
+                "type": 0
+            }, {
+                "num": 1,
+                "type": 0
+            }],
+            [{
+                "num": 0,
+                "type": 0
+            }, {
+                "num": 0,
+                "type": 0
+            }, null, {
+                "num": 1,
+                "type": 0
+            }, {
+                "num": 1,
+                "type": 0
+            }, {
+                "num": 1,
+                "type": 0
+            }, {
+                "num": 1,
+                "type": 0
+            }],
+            [{
+                "num": 2,
+                "type": 1
+            }, {
+                "num": 2,
+                "type": 1
+            }, {
+                "num": 4,
+                "type": 0
+            }, {
+                "num": 1,
+                "type": 0
+            }, {
+                "num": 1,
+                "type": 0
+            }, {
+                "num": 1,
+                "type": 0
+            }, {
+                "num": 1,
+                "type": 0
+            }]
+        ]
+    ],
+    "name": "Chair"
+}
