@@ -1,7 +1,6 @@
 import { CanvasTexture, Color } from "three";
 import { HintType, LineHint } from "../PicrossShape";
 import { color2string, getContrastYIQ, colors } from "./Utils";
-import { dark_theme } from "../UI/GUIProperties";
 
 export namespace TextureUtils {
 
@@ -22,8 +21,8 @@ export namespace TextureUtils {
             text_color: getContrastYIQ(
                 options !== undefined && options.fill_color !== undefined ? options.fill_color : new Color(0xffffff)
             ),
-            line_color: dark_theme ? colors.white() : colors.black(),
-            fill_color: dark_theme ? colors.black() : colors.white(),
+            line_color: colors.black(),
+            fill_color: colors.white(),
             line_width: 4,
             ...options
         };
@@ -60,7 +59,7 @@ export namespace TextureUtils {
 
             if (hint.type === HintType.circle) {
                 ctx.arc(optns.size / 2, optns.size / 2, optns.size * 0.4, 0, 2 * Math.PI);
-            } else if (hint.type === HintType.rectangle) {
+            } else if (hint.type === HintType.square) {
                 ctx.rect(0.15 * optns.size, 0.15 * optns.size, optns.size * 0.7, optns.size * 0.7);
             }
         }

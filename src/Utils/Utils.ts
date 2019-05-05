@@ -397,6 +397,6 @@ export function capitalize(str: string): string {
     return `${str[0].toUpperCase()}${str.slice(1).toLowerCase()}`;
 }
 
-export function partialJSONParse(property: string, json: string): any {
-    return '';
+export function snakify(str: string): string {
+    return str.toLowerCase().split(' ').join('_');
 }

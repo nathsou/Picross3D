@@ -5,7 +5,10 @@
         "allowJs": true,
         "noImplicitAny": true,
         "outDir": "./dist",
-        "lib": ["webworker", "es2016", "dom"]
+        "lib": ["webworker", "es2016", "dom"],
+        "jsx": "react",
+        "allowSyntheticDefaultImports": true,
+        "moduleResolution": "node"
     },
     "exclude": [
         "node_modules"

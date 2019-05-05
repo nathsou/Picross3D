@@ -8,17 +8,14 @@ export abstract class CellSetRenderer {
     protected _three_renderer: WebGLRenderer;
     protected needs_rerender = true;
 
-    constructor(three_renderer?: WebGLRenderer) {
+    constructor(canvas: HTMLCanvasElement) {
         this._scene = new Scene();
         this._camera = new PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 1000);
         window.addEventListener('resize', () => this.onResize());
 
-        if (three_renderer) {
-            this._three_renderer = three_renderer;
-        } else {
-            this._three_renderer = new WebGLRenderer({ antialias: true });
-            this._three_renderer.setSize(window.innerWidth, window.innerHeight);
-        }
+        this._three_renderer = new WebGLRenderer({ antialias: true, canvas });
+        this._three_renderer.setPixelRatio(window.devicePixelRatio);
+        this._three_renderer.setSize(window.innerWidth, window.innerHeight);
     }
 
     protected onResize(): void {

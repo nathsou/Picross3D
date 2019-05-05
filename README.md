@@ -38,7 +38,7 @@ Indicates that there are 3 blocks in the line, split in 2 groups exactly.
 
 <img src='res/imgs/square_hint.png' alt='Square hint' width='64'/>
 
-Indicates that there are 5 blocks in the line, split in at least 3 groups.
+Indicates that there are 7 blocks in the line, split in at least 3 groups.
 
 ## Features
 

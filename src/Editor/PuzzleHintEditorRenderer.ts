@@ -3,23 +3,23 @@ import { CellSetRenderer } from "../CellSetRenderer";
 import { CellState } from "../PicrossShape";
 import { PicrossPuzzle } from "../Puzzle/PicrossPuzzle";
 import { PuzzleHintTextureManager } from "../PuzzleHintTextureManager";
-import { dark_theme } from "../UI/GUIProperties";
+import { colors } from "../Utils/Utils";
 
 export class PuzzleHintEditorRenderer extends CellSetRenderer {
 
     protected hints_textures: PuzzleHintTextureManager;
     public static options = {
-        bg_color: new Color(dark_theme ? '#130f40' : '#81D4FA'),
-        paint_color: new Color(dark_theme ? '#4834d4' : '#778beb'),
+        bg_color: new Color('#81D4FA'),
+        paint_color: new Color('#778beb'),
         erase_color: new Color('#dd4660'),
         build_color: new Color('#21a034'),
-        hint_color: new Color(dark_theme ? 'white' : 'black'),
+        hint_color: colors.black(),
         greyed_hint_color: new Color('#cdcdcd'),
         selection_helper_color: new Color('#000000')
     };
 
-    constructor(puzzle: PicrossPuzzle, three_renderer?: WebGLRenderer) {
-        super(three_renderer);
+    constructor(puzzle: PicrossPuzzle, canvas: HTMLCanvasElement) {
+        super(canvas);
 
         this.hints_textures = new PuzzleHintTextureManager(puzzle, {
             unknown_opacity: 1

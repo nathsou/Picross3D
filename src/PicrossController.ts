@@ -4,9 +4,11 @@ import { CellSelection } from "./CellSelection";
 import { CellSetRenderer } from "./CellSetRenderer";
 import { OrbitControls } from "./OrbitControls";
 import { PicrossShape } from "./PicrossShape";
-import { Disposable } from "./Screens/Screen";
 import { LineHandleManager, LineRange } from "./UI/LineHandleManager";
-import { PicrossGame } from "./PicrossGame";
+
+export interface Disposable {
+    dispose: () => void;
+}
 
 export interface Action {
     key: string,
@@ -41,13 +43,10 @@ export abstract class PicrossController implements Disposable {
         this.shape = shape;
         this.cells = new CellMeshSet(shape, renderer, normals);
 
-
-        const controls = PicrossGame.getInstance().controls;
-
         this.actions = {
-            hammer: { key: controls.hammer, selected: false },
-            brush: { key: controls.brush, selected: false },
-            builder: { key: controls.builder, selected: false },
+            hammer: { key: 'KeyW', selected: false },
+            brush: { key: 'KeyA', selected: false },
+            builder: { key: 'KeyQ', selected: false },
         };
 
         this.mouse = new Vector2();
@@ -260,7 +259,7 @@ export abstract class PicrossController implements Disposable {
     }
 
     protected restore(): void {
-        for (const { coords } of this.shape.history) {
+        for (const { coords } of this.shape.editHistory.history) {
             this.cells.addToQueue(coords[0], coords[1], coords[2]);
             this.cells.updateEdges(coords[0], coords[1], coords[2]);
             this.cells.updateNeighbors(coords[0], coords[1], coords[2]);

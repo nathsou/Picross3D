@@ -82,13 +82,13 @@ export class PicrossPuzzle extends EventEmitter {
         }
 
         switch (hint.type) {
-            case HintType.contiguous:
+            case HintType.simple:
                 return blocks_count === 1;
 
             case HintType.circle:
                 return blocks_count === 2;
 
-            case HintType.rectangle:
+            case HintType.square:
                 return blocks_count > 2;
 
             default:
@@ -151,14 +151,14 @@ export class PicrossPuzzle extends EventEmitter {
 
     public static cellCountToHint(seq: number[]): LineHint {
 
-        if (seq === undefined || seq.length === 0) return { num: 0, type: HintType.contiguous };
+        if (seq === undefined || seq.length === 0) return { num: 0, type: HintType.simple };
 
         const sum = seq.reduce((a, c) => a + c);
         const group_count = seq.length;
 
-        if (group_count === 1) return { num: sum, type: HintType.contiguous };
+        if (group_count === 1) return { num: sum, type: HintType.simple };
         if (group_count === 2) return { num: sum, type: HintType.circle };
-        if (group_count >= 3) return { num: sum, type: HintType.rectangle };
+        if (group_count >= 3) return { num: sum, type: HintType.square };
     }
 
     public toJSON(): PuzzleJSON {

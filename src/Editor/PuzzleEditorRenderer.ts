@@ -16,9 +16,8 @@ export class PuzzleEditorRenderer extends CellSetRenderer {
     private unk_materials: MeshLambertMaterial[];
     private painted_materials: MeshLambertMaterial[];
 
-    constructor(three_renderer?: WebGLRenderer) {
-        super(three_renderer);
-        this._three_renderer = three_renderer;
+    constructor(canvas: HTMLCanvasElement) {
+        super(canvas);
         this.initScene();
 
         const unk_mat = new MeshLambertMaterial({

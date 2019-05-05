@@ -1,8 +1,8 @@
 
-export interface WritableArrayLike<T> {
-    readonly length: number;
+export interface IterableWritableArrayLike<T> extends ArrayLike<T> {
     [n: number]: T;
-    slice(from: number, to: number): WritableArrayLike<T>;
+    slice(from: number, to: number): IterableWritableArrayLike<T>;
+    [Symbol.iterator](): IterableIterator<T>
 }
 
 export interface Coords3D {
@@ -14,12 +14,12 @@ export interface Coords3D {
 // https://0fps.net/2013/05/22/implementing-multidimensional-arrays-in-javascript/
 export class Array3D<T> {
 
-    private _data: WritableArrayLike<T>;
+    private _data: IterableWritableArrayLike<T>;
     private _dims: number[];
     private _strides: number[];
     private _offset: number;
 
-    constructor(data: WritableArrayLike<T>, dims: number[]) {
+    constructor(data: IterableWritableArrayLike<T>, dims: number[]) {
         this._data = data;
         this._dims = dims;
         this._strides = [1, this._dims[0], this._dims[0] * this._dims[1]];
@@ -96,7 +96,7 @@ export class Array3D<T> {
         return this._dims;
     }
 
-    public get data(): WritableArrayLike<T> {
+    public get data(): IterableWritableArrayLike<T> {
         return this._data;
     }
 

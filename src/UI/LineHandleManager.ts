@@ -1,7 +1,8 @@
-import { Raycaster, Vector2, Camera, OrbitControls, Vector3, Euler, Mesh, PlaneBufferGeometry, DoubleSide, MeshBasicMaterial, Light, AmbientLight, DirectionalLight, Color } from "three";
+import { Raycaster, Vector2, Camera, Vector3, Euler, Mesh, PlaneBufferGeometry, DoubleSide, MeshBasicMaterial, Light, AmbientLight, DirectionalLight, Color } from "three";
 import { LineSelectorHandle } from "./LineSelectorHandle";
 import EventEmitter from "../Utils/EventEmitter";
 import { LineDirection } from "../PicrossShape";
+import { OrbitControls } from "../OrbitControls";
 
 export interface LineRange {
     from: number,

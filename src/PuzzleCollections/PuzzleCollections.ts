@@ -1,6 +1,6 @@
 import { PuzzleJSON, puzzles } from "../Puzzle/Puzzles";
 
-export type PuzzleCollection = (() => PuzzleJSON)[];
+export type PuzzleCollection = PuzzleJSON[];
 
 export const collections: { [key: string]: PuzzleCollection } = {
 
@@ -19,7 +19,7 @@ export const collections: { [key: string]: PuzzleCollection } = {
 
     egypt: [
         puzzles.pyramid,
-        puzzles.shpinx_nicolas
+        puzzles.sphinx
     ],
 
     nature: [

@@ -428,13 +428,13 @@ export namespace PicrossSolver {
         }
 
         switch (hint.type) {
-            case HintType.contiguous:
+            case HintType.simple:
                 return lineSolveSequence([hint.num], state);
 
             case HintType.circle:
                 return lineSolveCircle(hint.num, state);
 
-            case HintType.rectangle:
+            case HintType.square:
                 return lineSolveRectangle(hint.num, state);
         }
 

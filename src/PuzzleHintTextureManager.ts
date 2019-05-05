@@ -2,8 +2,8 @@ import { Color, MeshBasicMaterial } from "three";
 import { CellState, LineDirection, LineHint } from "./PicrossShape";
 import { PicrossPuzzle } from "./Puzzle/PicrossPuzzle";
 import { PuzzleRenderer } from "./Puzzle/PuzzleRenderer";
-import { dark_theme } from "./UI/GUIProperties";
 import { TextureUtils } from "./Utils/TextureUtils";
+import { colors } from "./Utils/Utils";
 
 export interface PuzzleHintTextureManagerOptions {
     paint_color: Color,
@@ -23,9 +23,9 @@ export class PuzzleHintTextureManager {
         this.materials = new Map<string, MeshBasicMaterial>();
 
         this.options = {
-            paint_color: new Color(dark_theme ? '#4834d4' : '#778beb'),
-            unknown_color: new Color(dark_theme ? 'black' : 'white'),
-            text_color: new Color(dark_theme ? 'white' : 'black'),
+            paint_color: new Color('#778beb'),
+            unknown_color: colors.white(),
+            text_color: colors.black(),
             unknown_opacity: 1,
             ...options
         };

@@ -1,10 +1,15 @@
 import { PicrossPuzzle, PuzzleHints } from "./Puzzle/PicrossPuzzle";
 import { LineInfo, LineState } from "./Solver/PicrossSolver";
-import { Array3D } from "./Utils/Array3D";
+import { Array3D, IterableWritableArrayLike } from "./Utils/Array3D";
 import { boundingBox, Box } from "./Utils/Utils";
 
 export type CellCounts = number[][][];
 export type PuzzleDescription = CellCounts[];
+
+export interface ShapeJSON {
+    dims: number[],
+    cells: IterableWritableArrayLike<CellState>
+}
 
 export enum LineDirection {
     row, col, depth
@@ -15,7 +20,7 @@ export enum CellState {
 }
 
 export enum HintType {
-    contiguous, circle, rectangle
+    simple, circle, square
 }
 
 export interface LineHint {
@@ -23,20 +28,25 @@ export interface LineHint {
     type: HintType
 }
 
-export interface PuzzleEdit {
+export interface ShapeEdit {
     from: CellState,
     to: CellState,
     coords: number[]
 }
 
+export interface ShapeEditHistory {
+    history: ShapeEdit[],
+    dims: number[]
+}
+
 export class PicrossShape {
 
     private cells: Array3D<CellState>;
-    private edits_history: PuzzleEdit[];
+    private edits_history: ShapeEdit[];
     private hints: PuzzleHints;
     private needs_new_hints = true;
 
-    constructor(cells: CellState[] | Uint8Array, bounds: number[]);
+    constructor(cells: ArrayLike<CellState> | Uint8Array, bounds: number[]);
     constructor(dims: number[], fill_with: CellState);
     constructor(dims_or_cells: number[] | Uint8Array | CellState[], bounds_or_state: number[] | CellState) {
 
@@ -444,8 +454,11 @@ export class PicrossShape {
         return new PicrossShape(cells, dims);
     }
 
-    public get history(): PuzzleEdit[] {
-        return this.edits_history;
+    public get editHistory(): ShapeEditHistory {
+        return {
+            history: this.edits_history,
+            dims: this.dims
+        };
     }
 
     public restore(): void {
@@ -462,6 +475,25 @@ export class PicrossShape {
         }
 
         this.edits_history = [];
+    }
+
+    public static fromHistory(hist: ShapeEditHistory): PicrossShape {
+        const shape = new PicrossShape(hist.dims, CellState.blank);
+        shape.edits_history = hist.history;
+        shape.restore();
+
+        return shape;
+    }
+
+    public toJSON(): ShapeJSON {
+        return {
+            dims: [...this.dims],
+            cells: [...this.cells.data]
+        };
+    }
+
+    public static fromJSON(shape: ShapeJSON): PicrossShape {
+        return new PicrossShape(shape.cells, shape.dims);
     }
 
     public fillBoundingBox(): void {

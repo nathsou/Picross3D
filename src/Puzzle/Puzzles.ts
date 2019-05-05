@@ -36,12 +36,12 @@ export function isPuzzleJSON(json: any): json is PuzzleJSON {
         typeof json['name'] === 'string';
 }
 
-export const puzzles = {
-    horse: () => horse,
-    platypus: () => platypus,
-    chair: () => chair,
-    shpinx_nicolas: () => sphinx,
-    pyramid: () => pyramid,
-    strange_tree: () => strange_tree,
-    simple_hints: () => simple_hints
+export const puzzles: { [key: string]: PuzzleJSON } = {
+    horse,
+    platypus,
+    chair,
+    sphinx,
+    pyramid,
+    strange_tree,
+    simple_hints
 };

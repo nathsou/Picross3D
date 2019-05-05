@@ -3,12 +3,12 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const dist = path.resolve(__dirname, 'dist');
 
 module.exports = {
-    entry: './src/Main.ts',
+    entry: './src/Main.tsx',
 
     module: {
         rules: [{
-                test: /\.(ts)$/,
-                use: 'ts-loader',
+                test: /\.tsx?$/,
+                loader: 'awesome-typescript-loader',
                 exclude: [
                     /node_modules/,
                 ]
@@ -22,11 +22,15 @@ module.exports = {
                     },
                 },
                 include: path.join(__dirname, 'res')
-            }
+            },
+            {
+                test: /\.css$/,
+                use: ['style-loader', 'css-loader'],
+            },
         ]
     },
     resolve: {
-        extensions: ['.ts', '.js']
+        extensions: ['.ts', '.tsx', '.js']
     },
 
     output: {
@@ -35,12 +39,9 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            title: 'Picross 3D',
             filename: 'index.html',
-            meta: {
-                viewport: 'width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0'
-            },
+            template: './src/index.html'
         })
-    ],
-    devtool: 'eval-source-map'
+    ]
+    // devtool: 'eval-source-map'
 };
