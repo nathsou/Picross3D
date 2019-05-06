@@ -79,7 +79,7 @@ class PuzzleHintEditorScreen extends Component<PuzzleHintEditorScreenProps> {
                 <PSettingsButton onClick={toggleModal} />
                 <PBackButton onClick={this.setEditorShape} />
 
-                <PModal open={options_modal_open} onClose={toggleModal}>
+                <PModal show={options_modal_open} onClose={toggleModal}>
                     <PHomeButton onClick={this.closeModal} />
                     <PButtonLink to='puzzle' onClick={this.testPuzzle}>Test Puzzle</PButtonLink>
                     <PButton onClick={this.resetHints}>Reset</PButton>

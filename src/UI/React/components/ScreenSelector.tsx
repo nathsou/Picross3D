@@ -9,6 +9,7 @@ import PuzzleScreen from "../screens/PuzzleScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 import { ScreenState } from "../store/screens/screen/types";
 import { PicrossState } from "../store/store";
+import ControlsSettingsScreenProps from "../screens/ControlsSettingsScreen";
 
 class ScreenSelector extends Component<ScreenState> {
 
@@ -35,6 +36,9 @@ class ScreenSelector extends Component<ScreenState> {
 
             case 'collection_details':
                 return <CollectionDetailsScreen />;
+
+            case 'controls':
+                return <ControlsSettingsScreenProps />;
 
             default:
                 return {};

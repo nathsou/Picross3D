@@ -9,6 +9,10 @@ import { ScreenState } from "./screens/screen/types";
 import { screenReducer } from "./screens/screen/reducers";
 import { CollectionDetailsScreenState } from "./collection_details/types";
 import { collectionDetailsScreenReducer } from "./collection_details/reducers";
+import { ControlsState } from "./controls/types";
+import { controlsReducer } from "./controls/reducers";
+import { ControlsSettingsScreenState } from "./screens/controls_settings/types";
+import { controlsSettingsScreenReducer } from "./screens/controls_settings/reducers";
 
 
 export interface PicrossState {
@@ -16,7 +20,9 @@ export interface PicrossState {
     editor_screen: EditorScreenState,
     collection_details_screen: CollectionDetailsScreenState,
     hint_editor_screen: HintEditorScreenState,
-    screen: ScreenState
+    controls_settings_screen: ControlsSettingsScreenState,
+    screen: ScreenState,
+    controls: ControlsState
 }
 
 const rootReducer = combineReducers<PicrossState>({
@@ -24,7 +30,9 @@ const rootReducer = combineReducers<PicrossState>({
     editor_screen: editorScreenReducer,
     collection_details_screen: collectionDetailsScreenReducer,
     hint_editor_screen: hintEditorScreenReducer,
-    screen: screenReducer
+    controls_settings_screen: controlsSettingsScreenReducer,
+    screen: screenReducer,
+    controls: controlsReducer
 });
 
 export function configureStore(): Store<PicrossState> {

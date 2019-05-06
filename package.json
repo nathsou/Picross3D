@@ -1,6 +1,6 @@
 {
   "name": "picross",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Picross 3D in the browser!",
   "main": "picross.js",
   "scripts": {

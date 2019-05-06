@@ -10,13 +10,23 @@ export interface Disposable {
     dispose: () => void;
 }
 
+export type PicrossAction = 'brush' | 'hammer' | 'builder';
+
+export type PicrossControls = {
+    [index in PicrossAction]: string;
+} & {
+    brush: string;
+    hammer: string;
+    builder: string;
+};
+
 export interface Action {
     key: string,
     selected: boolean
 }
 
 export interface PicrossActions {
-    [index: string]: Action
+    [index: string]: Action,
     brush: Action,
     hammer: Action,
     builder: Action
@@ -37,16 +47,24 @@ export abstract class PicrossController implements Disposable {
     protected actions: PicrossActions;
     protected event_listeners: Map<string, (e: MouseEvent | KeyboardEvent) => void>;
     protected paused = false;
+    private static _controls: PicrossControls;
 
-    constructor(renderer: CellSetRenderer, shape: PicrossShape, handles = true, normals = false) {
+    constructor(
+        renderer: CellSetRenderer,
+        shape: PicrossShape,
+        handles = true,
+        normals = false
+    ) {
         this.renderer = renderer;
         this.shape = shape;
         this.cells = new CellMeshSet(shape, renderer, normals);
 
+        const { hammer, brush, builder } = PicrossController._controls;
+
         this.actions = {
-            hammer: { key: 'KeyW', selected: false },
-            brush: { key: 'KeyA', selected: false },
-            builder: { key: 'KeyQ', selected: false },
+            hammer: { key: hammer, selected: false },
+            brush: { key: brush, selected: false },
+            builder: { key: builder, selected: false },
         };
 
         this.mouse = new Vector2();
@@ -84,6 +102,14 @@ export abstract class PicrossController implements Disposable {
         this.renderer.addObject3D(...this.selection.getObjects());
 
         this.initEventListeners();
+    }
+
+    public static setControls(controls: PicrossControls): void {
+        PicrossController._controls = controls;
+    }
+
+    public static get controls(): PicrossControls {
+        return PicrossController._controls;
     }
 
     protected initEventListeners(): void {

@@ -136,7 +136,7 @@ export namespace ModelVoxelizer {
 
     }
 
-    export function load(uri: string, shape: PicrossShape, on_progress?: (prog: ProgressEvent) => any): Promise<void> {
+    export function load(uri: string, shape: PicrossShape, on_progress?: (prog: ProgressEvent) => void): Promise<void> {
         const center = new Vector3(
             shape.dims[0] / 2,
             0,

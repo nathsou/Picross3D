@@ -501,46 +501,50 @@ export namespace PicrossSolver {
         puzzle: PicrossPuzzle,
         max_fails = 100,
         score_func: HintScorer = lineSolveHintScorer2
-    ): void {
-        const hints = puzzle.getHints();
-        const scores: number[][][] = [];
-        const coord_x = [1, 0, 0]; //j, i, i
-        const coord_y = [2, 2, 1]; //k, k, j
+    ): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            const hints = puzzle.getHints();
+            const scores: number[][][] = [];
+            const coord_x = [1, 0, 0]; //j, i, i
+            const coord_y = [2, 2, 1]; //k, k, j
 
-        // assign a score to each hint
-        for (let d: LineDirection = 0; d < 3; d++) {
-            scores.push([]);
-            for (let x = 0; x < puzzle.shape.dims[coord_x[d]]; x++) {
-                scores[d].push([]);
-                for (let y = 0; y < puzzle.shape.dims[coord_y[d]]; y++) {
-                    scores[d][x][y] = score_func(hints[d][x][y], x, y, d, puzzle.shape);
+            // assign a score to each hint
+            for (let d: LineDirection = 0; d < 3; d++) {
+                scores.push([]);
+                for (let x = 0; x < puzzle.shape.dims[coord_x[d]]; x++) {
+                    scores[d].push([]);
+                    for (let y = 0; y < puzzle.shape.dims[coord_y[d]]; y++) {
+                        scores[d][x][y] = score_func(hints[d][x][y], x, y, d, puzzle.shape);
+                    }
                 }
             }
-        }
 
-        // take the top scoring hint
-        // test if the puzzle is linesolvable without it
-        // if it is remove it, else test next best scoring hint
-        let fails = 0;
-        while (fails < max_fails) {
-            const max = max3d(scores);
+            // take the top scoring hint
+            // test if the puzzle is linesolvable without it
+            // if it is remove it, else test next best scoring hint
+            let fails = 0;
+            while (fails < max_fails) {
+                const max = max3d(scores);
 
-            if (max.value === -Infinity) break;
+                if (max.value === -Infinity) break;
 
-            const hint_copy = { ...hints[max.x][max.y][max.z] };
+                const hint_copy = { ...hints[max.x][max.y][max.z] };
 
-            hints[max.x][max.y][max.z] = null;
-            // make sure this hint won't be selected in the future
-            scores[max.x][max.y][max.z] = -Infinity;
+                hints[max.x][max.y][max.z] = null;
+                // make sure this hint won't be selected in the future
+                scores[max.x][max.y][max.z] = -Infinity;
 
-            if (!puzzle.isSolvable()) {
-                // restore hint
-                hints[max.x][max.y][max.z] = hint_copy;
-                fails++;
-            } else {
-                fails = 0;
+                if (!puzzle.isSolvable()) {
+                    // restore hint
+                    hints[max.x][max.y][max.z] = hint_copy;
+                    fails++;
+                } else {
+                    fails = 0;
+                }
             }
-        }
+
+            resolve();
+        });
     }
 
 }

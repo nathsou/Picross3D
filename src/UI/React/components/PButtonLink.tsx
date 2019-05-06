@@ -6,7 +6,7 @@ import PButton, { PButtonProps } from './PButton';
 
 export interface PButtonLinkProps extends PButtonProps {
     to: ScreenKey,
-    waitFor?: () => Promise<any>,
+    waitFor?: () => Promise<boolean>,
     changeScreen: (screen: ScreenKey) => void
 }
 
@@ -14,7 +14,8 @@ class PButtonLink extends Component<PButtonLinkProps> {
 
     private redirect = async (ev: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         if (this.props.waitFor) {
-            await this.props.waitFor();
+            const abort = !(await this.props.waitFor());
+            if (abort) return;
         }
 
         if (this.props.onClick) {

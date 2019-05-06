@@ -1,9 +1,10 @@
-import { EditorScreenActions, EditorScreenState, TOGGLE_EDITOR_OPTIONS_MODAL, SET_EDITOR_SHAPE } from "./types";
+import { EditorScreenActions, EditorScreenState, TOGGLE_EDITOR_OPTIONS_MODAL, SET_EDITOR_SHAPE, IS_GENERATING_PUZZLE } from "./types";
 import { ShapeJSON } from "../../../../../PicrossShape";
 
 const defaultEditorScreenState: EditorScreenState = {
     options_modal_open: false,
-    shape: null
+    shape: null,
+    generating_puzzle: false
 };
 
 function toggleModalReducer(
@@ -30,6 +31,17 @@ function setShapeReducer(
     return state;
 }
 
+function isGeneratingPuzzleReducer(
+    state = defaultEditorScreenState.generating_puzzle,
+    action: EditorScreenActions
+): boolean {
+    if (action.type === IS_GENERATING_PUZZLE) {
+        return action.generating;
+    }
+
+    return state;
+}
+
 export function editorScreenReducer(
     state = defaultEditorScreenState,
     action: EditorScreenActions
@@ -37,6 +49,7 @@ export function editorScreenReducer(
 
     return {
         options_modal_open: toggleModalReducer(state.options_modal_open, action),
-        shape: setShapeReducer(state.shape, action)
+        shape: setShapeReducer(state.shape, action),
+        generating_puzzle: isGeneratingPuzzleReducer(state.generating_puzzle, action)
     };
 }

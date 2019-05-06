@@ -50,7 +50,7 @@ class PuzzleScreen extends Component<PuzzleScreenProps> {
             <div>
                 <PSettingsButton onClick={toggleModal} />
                 <PBackButton />
-                <PModal open={options_modal_open} onClose={toggleModal}>
+                <PModal show={options_modal_open} onClose={toggleModal}>
                     <PHomeButton />
                     <PButton onClick={this.handleRestart}>Restart</PButton>
                 </PModal>

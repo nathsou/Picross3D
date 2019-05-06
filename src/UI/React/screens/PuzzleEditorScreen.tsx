@@ -9,7 +9,7 @@ import PButton from '../components/PButton';
 import PButtonLink from '../components/PButtonLink';
 import PModal from '../components/PModal';
 import PSettingsButton from '../components/PSettingsButton';
-import { toggleEditorOptionsModal } from '../store/screens/editor/actions';
+import { toggleEditorOptionsModal, isGeneratingPuzzle } from '../store/screens/editor/actions';
 import { EditorScreenState } from '../store/screens/editor/types';
 import { setHintEditorPuzzle } from '../store/screens/hintEditor/actions';
 import { PicrossState } from '../store/store';
@@ -18,7 +18,8 @@ import PHomeButton from '../components/PHomeButton';
 
 export interface PuzzleEditorScreenProps extends EditorScreenState {
     toggleModal: () => void,
-    setHintEditorPuzzle: (puzzle: PuzzleJSON) => void
+    setHintEditorPuzzle: (puzzle: PuzzleJSON) => void,
+    isGeneratingPuzzle: (generating: boolean) => void
 }
 
 class PuzzleEditorScreen extends Component<PuzzleEditorScreenProps> {
@@ -49,15 +50,25 @@ class PuzzleEditorScreen extends Component<PuzzleEditorScreenProps> {
         }
     }
 
-    private generateHintEditorPuzzle = () => {
-        this.closeModal();
+    private generateHintEditorPuzzle = async () => {
 
-        this.shape.trim();
-        const puzzle = new PicrossPuzzle(this.shape);
-        PicrossSolver.removeHints(puzzle);
-        this.shape.fillBoundingBox();
+        this.props.isGeneratingPuzzle(true);
 
-        this.props.setHintEditorPuzzle(puzzle.toJSON());
+        return new Promise<boolean>(async (resolve) => {
+
+            try {
+                this.shape.trim();
+                const puzzle = new PicrossPuzzle(this.shape);
+                await PicrossSolver.removeHints(puzzle);
+                this.shape.fillBoundingBox();
+                this.props.setHintEditorPuzzle(puzzle.toJSON());
+                resolve(true);
+            } catch (e) {
+                console.error(e);
+                resolve(false);
+            }
+
+        });
     }
 
     private reset = () => {
@@ -71,17 +82,21 @@ class PuzzleEditorScreen extends Component<PuzzleEditorScreenProps> {
     }
 
     public render() {
-        const { toggleModal, options_modal_open } = this.props;
+        const { toggleModal, options_modal_open, generating_puzzle } = this.props;
         return (
             <div>
                 <PSettingsButton onClick={toggleModal} />
-                <PModal open={options_modal_open} onClose={toggleModal}>
+                <PModal show={options_modal_open && !generating_puzzle} onClose={toggleModal}>
                     <PHomeButton onClick={this.closeModal} />
-                    <PButtonLink to='hint_editor' onClick={this.generateHintEditorPuzzle}>
+                    <PButtonLink to='hint_editor' waitFor={this.generateHintEditorPuzzle}>
                         Generate Puzzle
                     </PButtonLink>
                     <PButton onClick={this.reset}>Reset</PButton>
                     <PButton onClick={this.importPuzzle}>Import</PButton>
+                </PModal>
+
+                <PModal show={generating_puzzle} onClose={() => { }}>
+                    <p>Removing hints...</p>
                 </PModal>
 
                 <canvas ref={cnv => this.canvas = cnv} tabIndex={1}></canvas>
@@ -94,6 +109,7 @@ export default connect(
     (state: PicrossState) => state.editor_screen,
     {
         toggleModal: () => toggleEditorOptionsModal(),
-        setHintEditorPuzzle: (puzzle: PuzzleJSON) => setHintEditorPuzzle(puzzle)
+        setHintEditorPuzzle: (puzzle: PuzzleJSON) => setHintEditorPuzzle(puzzle),
+        isGeneratingPuzzle: (generating: boolean) => isGeneratingPuzzle(generating)
     }
 )(PuzzleEditorScreen);

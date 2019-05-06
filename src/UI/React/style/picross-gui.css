@@ -1,4 +1,5 @@
 :root {
+    /* --primary-color: #222f3e; */
     --primary-color: black;
     --secondary-color: white;
     --passive-color: #aaa;
@@ -21,6 +22,7 @@ html {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    background-color: var(--secondary-color);
 }
 
 canvas {
@@ -31,6 +33,7 @@ canvas {
 
 h1 {
     font-size: 2.5rem;
+    color: var(--primary-color);
 }
 
 .picross-btn {
@@ -44,7 +47,7 @@ h1 {
     margin-top: 4px;
     width: 100%;
     max-width: 400px;
-    height: 40px;
+    /* height: 40px; */
 }
 
 .picross-btn:hover {
@@ -62,6 +65,7 @@ h1 {
     width: 60%;
     padding: 4rem 7rem 6rem 7rem;
     max-width: 600px;
+    background-color: var(--secondary-color);
 }
 
 ::-webkit-scrollbar {
@@ -86,7 +90,7 @@ h1 {
     align-items: center;
     max-height: 80%;
     overflow-y: auto;
-    overflow-x: hidden;
+    /* overflow-x: hidden; */
 }
 
 .picross-vertical-container button:nth-of-type(1) {
@@ -108,6 +112,7 @@ h1 {
     /* border: none; */
     border: var(--border-size) solid var(--primary-color);
     outline: none;
+    /* color: var(--primary-color); */
 }
 
 .picross-floating-btn.picross-back-btn {
@@ -115,6 +120,7 @@ h1 {
     top: 10px;
     position: absolute;
     border: none;
+    font-size: 1rem;
 }
 
 .picross-floating-btn.picross-back-btn:hover {
@@ -124,6 +130,7 @@ h1 {
 
 .picross-floating-btn.picross-options-btn {
     right: 10px;
+    border-color: black;
 }
 
 .picross-floating-btn:hover {
@@ -150,7 +157,6 @@ h1 {
     text-align: center;
 }
 
-/* Modal Body */
 .picross-modal-body {
     padding: 2px 16px;
     display: flex;
@@ -158,24 +164,21 @@ h1 {
     align-items: center;
 }
 
-/* Modal Content */
 .picross-modal-content {
     position: relative;
     background-color: var(--secondary-color);
     margin: 15% auto;
     padding: 0;
     width: 60%;
+    max-width: 500px;
     border: var(--border-size) solid var(--primary-color);
     text-align: center;
     z-index: 2;
 }
 
-/* The Close Button */
 .picross-modal-close {
     color: var(--secondary-color);
     float: left;
-    /* font-size: 28px; */
-    font-weight: bold;
 }
 
 .picross-modal-close:hover,
@@ -195,13 +198,14 @@ h1 {
 
 @media screen and (max-width: 768px) {
     html {
-        font-size: .8em;
+        font-size: 1.4em;
         overflow: hidden;
     }
 
     .picross-container {
         border: none;
         position: inherit;
+        width: 80%;
     }
 
     .picross-modal-content {
@@ -209,16 +213,24 @@ h1 {
         height: 100%;
         margin: 0px;
         border: none;
+        max-width: 100%;
     }
 
     .picross-vertical-container {
         justify-content: start;
+        max-height: 100%;
+        overflow-y: inherit;
+    }
+
+    .picross-btn {
+        margin: 5px auto;
     }
 }
 
 @media screen and (max-height: 420px) {
     html {
-        font-size: .8em;
+        font-size: 1.2em;
+        overflow: hidden;
     }
 
     .picross-container {

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import PButton from '../components/PButton';
 import PBackButton from '../components/PBackButton';
+import PButtonLink from '../components/PButtonLink';
 
 export default class SettingsScreen extends Component {
 
@@ -10,7 +10,8 @@ export default class SettingsScreen extends Component {
                 <h1>Settings</h1>
                 <PBackButton />
                 <div className='picross-vertical-container'>
-                    <PButton>Controls</PButton>
+                    <PButtonLink to='controls'>Controls</PButtonLink>
+                    {/* <PButtonLink to='theme'>Theme</PButtonLink> */}
                 </div>
             </div>
         );

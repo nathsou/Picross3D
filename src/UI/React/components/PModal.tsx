@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 interface PModalProps {
-    open?: boolean,
+    show?: boolean,
     onClose: () => void,
     title?: string
 }
@@ -11,7 +11,7 @@ export default class PModal extends Component<PModalProps> {
 
     public render() {
         return (
-            <div className='picross-modal' style={{ display: this.props.open ? 'block' : 'none' }}>
+            <div className='picross-modal' style={{ display: this.props.show ? 'block' : 'none' }}>
                 <div className='picross-modal-content'>
                     <div className="picross-modal-header">
                         <span className='picross-modal-close' onClick={this.props.onClose}>

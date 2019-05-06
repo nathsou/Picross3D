@@ -1,5 +1,5 @@
 export type ScreenKey = 'home' | 'puzzle' | 'editor' |
-    'collections' | 'collection_details' | 'hint_editor' | 'settings';
+    'collections' | 'collection_details' | 'hint_editor' | 'settings' | 'controls';
 
 export interface ScreenState {
     active_screen_key: ScreenKey,

@@ -18,6 +18,7 @@ import strange_tree from '../../res/puzzles/nature/strange_tree.json';
 ///@ts-ignore
 import simple_hints from '../../res/puzzles/tutorial/simple_hints.json';
 import { PuzzleHints } from "./PicrossPuzzle";
+import { isObject } from '../Utils/Utils';
 
 export interface PuzzleJSON {
     dims: number[],
@@ -26,14 +27,20 @@ export interface PuzzleJSON {
 }
 
 export function isPuzzleJSON(json: any): json is PuzzleJSON {
-    const dims = json['dims'];
 
-    return Array.isArray(dims) &&
-        dims.length === 3 &&
-        Array.isArray(json['hints']) &&
-        json['hints'].length === 3 &&
-        // getArrayDims(json['hints']).every((d, i) => dims[i] === d) &&
-        typeof json['name'] === 'string';
+    if (isObject(json)) {
+
+        const dims = json['dims'];
+
+        return Array.isArray(dims) &&
+            dims.length === 3 &&
+            Array.isArray(json['hints']) &&
+            json['hints'].length === 3 &&
+            // getArrayDims(json['hints']).every((d, i) => dims[i] === d) &&
+            typeof json['name'] === 'string';
+    }
+
+    return false;
 }
 
 export const puzzles: { [key: string]: PuzzleJSON } = {

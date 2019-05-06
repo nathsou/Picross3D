@@ -209,7 +209,7 @@ export function getContrastYIQ(color: Color): Color {
     return yiq >= 0.5 ? colors.black() : colors.white();
 }
 
-export function getArrayDims(arr: any[]): number[] {
+export function getArrayDims(arr: unknown[]): number[] {
 
     const dims = [];
     let a = arr;
@@ -366,7 +366,7 @@ export function floorStep(x: number, step: number): number {
 }
 
 // deep merge https://stackoverflow.com/questions/27936772/how-to-deep-merge-instead-of-shallow-merge
-export function isObject(item: any): item is Object {
+export function isObject(item: unknown): item is Object {
     return (item && typeof item === 'object' && !Array.isArray(item));
 }
 
