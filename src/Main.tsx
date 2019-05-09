@@ -8,6 +8,11 @@ import ScreenSelector from './UI/React/components/ScreenSelector';
 import { configureStore } from './UI/React/store/store';
 import './UI/React/style/picross-gui.css';
 import ControlsManager from './UI/React/components/ControlsManager';
+import * as Utils from './Utils/Utils';
+import { PuzzleGenerator } from './Solver/PuzzleGenerator';
+import { PicrossPuzzle } from './Puzzle/PicrossPuzzle';
+import { PicrossSolver } from './Solver/PicrossSolver';
+import { collections } from './PuzzleCollections/PuzzleCollections';
 
 font_awesome_library.add(faBars, faDotCircle, faChevronLeft, faCircle, faEraser);
 
@@ -18,6 +23,17 @@ ReactDOM.render(
     </Provider>,
     document.getElementById('root')
 );
+
+///@ts-ignore
+window['PuzzleGenerator'] = PuzzleGenerator;
+///@ts-ignore
+window['Utils'] = Utils;
+///@ts-ignore
+window['PicrossPuzzle'] = PicrossPuzzle;
+///@ts-ignore
+window['PicrossSolver'] = PicrossSolver;
+///@ts-ignore
+window['collections'] = collections;
 
 /*
     TODO:

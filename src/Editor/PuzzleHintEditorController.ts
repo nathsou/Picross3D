@@ -10,10 +10,10 @@ export class PuzzleHintEditorController extends PicrossController {
         super(renderer, puzzle.shape);
         this.puzzle = puzzle;
 
-        this.cells.on('eraseCell', () => {
+        this.cells.on('erase_cell', () => {
             this.puzzle.checkResolved();
         });
-        this.cells.on('paintCell', () => {
+        this.cells.on('paint_cell', () => {
             this.puzzle.checkResolved();
         });
 

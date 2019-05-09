@@ -1,14 +1,14 @@
 export type EventHandler = (e: any) => void;
 
-export default abstract class EventEmitter {
+export default abstract class EventEmitter<EventName = string> {
 
-    event_handlers: Map<string, EventHandler[]>;
+    private event_handlers: Map<EventName, EventHandler[]>;
 
     constructor() {
-        this.event_handlers = new Map<string, EventHandler[]>();
+        this.event_handlers = new Map<EventName, EventHandler[]>();
     }
 
-    public on(ev: string, handler: EventHandler): void {
+    public on(ev: EventName, handler: EventHandler): void {
         if (!this.isListening(ev)) {
             this.event_handlers.set(ev, []);
         }
@@ -16,11 +16,11 @@ export default abstract class EventEmitter {
         this.event_handlers.get(ev).push(handler);
     }
 
-    protected isListening(ev: string): boolean {
+    protected isListening(ev: EventName): boolean {
         return this.event_handlers.has(ev);
     }
 
-    protected emit(ev: string, value?: any, thisArg?: any): void {
+    protected emit(ev: EventName, value?: any, thisArg?: any): void {
         if (this.isListening(ev)) {
             for (const handler of this.event_handlers.get(ev)) {
                 handler.call(thisArg, value);
@@ -28,11 +28,11 @@ export default abstract class EventEmitter {
         }
     }
 
-    protected bindEvent(em: EventEmitter, ev: string): void {
+    protected bindEvent(em: EventEmitter<EventName>, ev: EventName): void {
         em.on(ev, value => this.emit(ev, value));
     }
 
-    public removeListener(ev: string): void {
+    public removeListener(ev: EventName): void {
         this.event_handlers.delete(ev);
     }
 

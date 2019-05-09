@@ -9,6 +9,7 @@
     --font-size: 1em;
     --font-style: bold;
     --breakpoint: 768px;
+    --btn-max-width: 400px;
 }
 
 html {
@@ -46,7 +47,7 @@ h1 {
     outline: none;
     margin-top: 4px;
     width: 100%;
-    max-width: 400px;
+    max-width: var(--btn-max-width);
     /* height: 40px; */
 }
 
@@ -194,6 +195,18 @@ h1 {
 
 .picross-modal-close:hover .picross-modal-close-idle {
     display: inline;
+}
+
+.picross-text-input {
+    border: var(--border-size) solid var(--primary-color);
+    outline: none;
+    width: 100%;
+    max-width: var(--btn-max-width);
+    font-size: var(--font-size);
+    font-family: var(--font-family);
+    font-weight: bold;
+    margin: 4px auto;
+    box-sizing: border-box;
 }
 
 @media screen and (max-width: 768px) {

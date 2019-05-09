@@ -2,10 +2,13 @@ import { CellState, HintType, LineDirection, LineHint, PicrossShape } from "../P
 import { PicrossSolver, LineState } from "../Solver/PicrossSolver";
 import EventEmitter, { EventHandler } from "../Utils/EventEmitter";
 import { PuzzleJSON, isPuzzleJSON } from "./Puzzles";
+import { coord_x, coord_y } from "../Solver/PuzzleGenerator";
 
 export type PuzzleHints = LineHint[][][];
 
-export class PicrossPuzzle extends EventEmitter {
+export type PicrossPuzzleEventName = 'resolved';
+
+export class PicrossPuzzle extends EventEmitter<PicrossPuzzleEventName> {
 
     private hints: PuzzleHints;
     private _shape: PicrossShape;
@@ -31,12 +34,15 @@ export class PicrossPuzzle extends EventEmitter {
         }
     }
 
-    // a puzzle is satisfied when all hints are satisfied
     public checkResolved(): void {
 
-        const coord_x = [1, 0, 0]; //j, i, i
-        const coord_y = [2, 2, 1]; //k, k, j
+        if (this.isResolved()) {
+            this.emit('resolved');
+        }
+    }
 
+    // a puzzle is satisfied when all hints are satisfied
+    public isResolved(): boolean {
         for (let d: LineDirection = 0; d < 3; d++) {
             for (let x = 0; x < this._shape.dims[coord_x[d]]; x++) {
                 for (let y = 0; y < this._shape.dims[coord_y[d]]; y++) {
@@ -45,13 +51,13 @@ export class PicrossPuzzle extends EventEmitter {
                         hint !== null &&
                         !PicrossPuzzle.lineSatifiesHint(this._shape.getLine(x, y, d), hint)
                     ) {
-                        return;
+                        return false;
                     }
                 }
             }
         }
 
-        this.emit('resolved');
+        return true;
     }
 
     public static lineSatifiesHint(line: LineState, hint: LineHint): boolean {
@@ -146,7 +152,7 @@ export class PicrossPuzzle extends EventEmitter {
     }
 
     public isSolvable(): boolean {
-        return PicrossSolver.solve(this) !== null;
+        return PicrossSolver.bruteForceSolve(this) !== null;
     }
 
     public static cellCountToHint(seq: number[]): LineHint {

@@ -14,7 +14,8 @@ export const collections: { [key: string]: PuzzleCollection } = {
     ],
 
     furniture: [
-        puzzles.chair
+        puzzles.chair,
+        puzzles.computer
     ],
 
     egypt: [

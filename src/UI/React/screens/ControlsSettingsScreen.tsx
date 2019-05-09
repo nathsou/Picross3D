@@ -18,15 +18,22 @@ interface ControlsSettingsScreenProps {
 
 class ControlsSettingsScreen extends Component<ControlsSettingsScreenProps> {
 
+    private key_listener: (ev: KeyboardEvent) => void;
+
     private handleClick = (action: PicrossAction) => {
+        if (this.key_listener !== undefined) {
+            window.removeEventListener('keydown', this.key_listener);
+        }
+
         this.props.setListeningActionKey(action);
-        const keydown_handler = (ev: KeyboardEvent) => {
+        this.key_listener = (ev: KeyboardEvent) => {
             this.props.setActionKey(action, ev.code);
             this.props.setListeningActionKey(null);
-            window.removeEventListener('keydown', keydown_handler);
+            window.removeEventListener('keydown', this.key_listener);
         };
 
-        window.addEventListener('keydown', keydown_handler);
+
+        window.addEventListener('keydown', this.key_listener);
     };
 
     public componentWillUnmount() {

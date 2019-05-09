@@ -1,10 +1,40 @@
 import { CellState } from "../PicrossShape";
-import { PicrossSolver } from "../Solver/PicrossSolver";
+import { PicrossSolver, BlockPosition } from "../Solver/PicrossSolver";
 
-describe('Line PicrossSolver', () => {
+export const [unk, blank, painted] = [CellState.unknown, CellState.blank, CellState.painted];
+
+export const state = (line: string): CellState[] =>
+    line
+        .split('')
+        .map(c => c === 'x' ? painted : (c === '_' ? blank : unk));
+
+export const line = (state: string): (CellState | number)[] => {
+    let block_id = 0, in_block = false;
+    const line = [];
+
+    for (let c of state) {
+        if (c === 'x') {
+            if (!in_block) {
+                block_id++;
+            }
+            line.push(-block_id);
+            in_block = true;
+        } else if (c === '?') {
+            line.push(unk);
+            in_block = false;
+        } else if (c === '_') {
+            line.push(blank);
+            in_block = false;
+        }
+    }
+
+    return line;
+};
+
+describe('LineSolver', () => {
 
     it('should check line validity', () => {
-        expect(PicrossSolver.isLineValid([
+        const blocks: BlockPosition[] = [
             {
                 start: 2,
                 len: 1
@@ -12,179 +42,62 @@ describe('Line PicrossSolver', () => {
                 start: 4,
                 len: 2
             }
-        ], [
-                CellState.unknown,
-                CellState.unknown,
-                CellState.unknown,
-                CellState.unknown,
-                CellState.unknown,
-                CellState.unknown,
-                CellState.unknown
-            ])).toBe(true);
+        ];
+
+        expect(PicrossSolver.isLineValid(blocks, state('???????'))).toBe(true);
 
         // overlapping blank cell
-        expect(PicrossSolver.isLineValid([
-            {
-                start: 2,
-                len: 1
-            }, {
-                start: 4,
-                len: 2
-            }
-        ], [
-                CellState.unknown,
-                CellState.unknown,
-                CellState.unknown,
-                CellState.unknown,
-                CellState.unknown,
-                CellState.blank,
-                CellState.unknown
-            ])).toBe(false);
-
+        expect(PicrossSolver.isLineValid(blocks, state('?????_?'))).toBe(false);
 
         // next to painted cell
-        expect(PicrossSolver.isLineValid([
-            {
-                start: 2,
-                len: 1
-            }, {
-                start: 4,
-                len: 2
-            }
-        ], [
-                CellState.unknown,
-                CellState.unknown,
-                CellState.unknown,
-                CellState.unknown,
-                CellState.unknown,
-                CellState.painted,
-                CellState.painted
-            ])).toBe(false);
+        expect(PicrossSolver.isLineValid(blocks, state('?????xx'))).toBe(false);
     });
 
 
     it('should find a simple leftmost solution', () => {
-        const state1 = [
-            CellState.unknown,
-            CellState.unknown,
-            CellState.unknown,
-            CellState.unknown
-        ];
+        const state1 = state('????');
 
         expect(PicrossSolver.generateLine(PicrossSolver.leftMost([1, 2], state1), state1))
-            .toEqual([-1, 0, -2, -2]);
+            .toEqual(line('x?xx'));
 
-        const state2 = [
-            CellState.unknown,
-            CellState.blank,
-            CellState.unknown,
-            CellState.unknown
-        ];
+        const state2 = state('?_??');
 
         expect(PicrossSolver.generateLine(PicrossSolver.leftMost([1, 2], state2), state2))
-            .toEqual([-1, CellState.blank, -2, -2]);
+            .toEqual(line('x_xx'));
 
-        const state3 = [
-            CellState.unknown,
-            CellState.unknown,
-            CellState.unknown,
-            CellState.unknown,
-            CellState.unknown,
-            CellState.painted,
-            CellState.unknown
-        ];
+        const state3 = state('?????x?');
 
         expect(PicrossSolver.generateLine(PicrossSolver.leftMost([1, 2], state3), state3))
-            .toEqual([-1, 0, 0, 0, -2, -2, 0]);
+            .toEqual(line('x???xx?'));
 
-        const state4 = [
-            CellState.unknown,
-            CellState.unknown,
-            CellState.unknown,
-            CellState.unknown,
-            CellState.unknown,
-            CellState.painted,
-            CellState.unknown,
-            CellState.unknown
-        ];
+        const state4 = state('?????x??');
 
         expect(PicrossSolver.generateLine(PicrossSolver.leftMost([1, 2, 3], state4), state4))
-            .toEqual([-1, 0, -2, -2, 0, -3, -3, -3]);
+            .toEqual(line('x?xx?xxx'));
     });
 
-    // it('should throw an error in invalid cases', () => {
-    //     const state = [
-    //         CellState.unknown,
-    //         CellState.unknown,
-    //         CellState.unknown,
-    //         CellState.unknown,
-    //         CellState.unknown,
-    //         CellState.painted,
-    //         CellState.unknown,
-    //         CellState.unknown
-    //     ];
-
-    //     expect(PicrossSolver.leftMost([1, 2, 4], state)).toThrow();
-    // });
+    it('should return null in invalid cases', () => {
+        expect(PicrossSolver.leftMost([1, 2, 4], state('?????x??'))).toBeNull();
+        expect(PicrossSolver.leftMost([1], state('______'))).toBeNull();
+        expect(PicrossSolver.leftMost([4], state('x____x'))).toBeNull();
+    });
 
     it('should shift blocks to fit the state', () => {
-        const state = [
-            CellState.unknown, // 0
-            CellState.unknown, // 1
-            CellState.unknown, // 2
-            CellState.unknown, // 3
-            CellState.unknown, // 4
-            CellState.unknown, // 5
-            CellState.blank, // 6
-            CellState.painted, // 7
-            CellState.unknown // 8
-        ];
+        const state1 = state('??????_x?');
 
-        expect(PicrossSolver.generateLine(PicrossSolver.leftMost([1, 2], state), state))
-            .toEqual([-1, 0, 0, 0, 0, 0, 1, -2, -2]);
+        expect(PicrossSolver.generateLine(PicrossSolver.leftMost([1, 2], state1), state1))
+            .toEqual(line('x?????_xx'));
 
-        const state2 = [
-            CellState.unknown, // 0
-            CellState.unknown, // 1
-            CellState.unknown, // 2
-            CellState.unknown, // 3
-            CellState.unknown, // 4
-            CellState.blank, // 5
-            CellState.painted, // 6
-            CellState.blank, // 7
-            CellState.unknown, // 8
-            CellState.unknown, // 9
-            CellState.unknown, // 10
-            CellState.unknown, // 11
-            CellState.unknown, // 12
-            CellState.unknown // 13
-        ];
+        const state2 = state('?????_x_??????');
 
         expect(PicrossSolver.generateLine(PicrossSolver.leftMost([1, 2, 3], state2), state2))
-            .toEqual([0, 0, 0, 0, 0, 1, -1, 1, -2, -2, 0, -3, -3, -3]);
+            .toEqual(line('?????_x_xx?xxx'));
     });
 
     it('should reposition blocks', () => {
-        const state = [
-            CellState.unknown, // 0
-            CellState.unknown, // 1
-            CellState.unknown, // 2
-            CellState.unknown, // 3
-            CellState.painted, // 4
-            CellState.unknown, // 5
-            CellState.unknown, // 6
-            CellState.blank, // 7
-            CellState.painted, // 8
-            CellState.blank, // 9
-            CellState.unknown, // 10
-            CellState.unknown, // 11
-            CellState.unknown, // 12
-            CellState.unknown, // 13
-            CellState.unknown, // 14
-            CellState.unknown // 15
-        ];
+        const state1 = state('????x??_x_??????');
 
-        expect(PicrossSolver.generateLine(PicrossSolver.leftMost([1, 1, 2, 3], state), state))
-            .toEqual([0, 0, 0, 0, -1, 0, 0, 1, -2, 1, -3, -3, 0, -4, -4, -4]);
+        expect(PicrossSolver.generateLine(PicrossSolver.leftMost([1, 1, 2, 3], state1), state1))
+            .toEqual(line('????x??_x_xx?xxx'));
     });
 });

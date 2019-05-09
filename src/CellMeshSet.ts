@@ -5,7 +5,9 @@ import { LineRange } from "./UI/LineHandleManager";
 import { CellState, LineDirection, PicrossShape } from "./PicrossShape";
 import EventEmitter from "./Utils/EventEmitter";
 
-export class CellMeshSet extends EventEmitter {
+type CellMeshSetEventName = 'paint_cell' | 'erase_cell';
+
+export class CellMeshSet extends EventEmitter<CellMeshSetEventName> {
 
     private cells: Array3D<Mesh>;
     private shape: PicrossShape;
@@ -227,7 +229,7 @@ export class CellMeshSet extends EventEmitter {
         this.updateNeighbors(i, j, k);
         this.updateEdges(i, j, k);
 
-        this.emit('eraseCell');
+        this.emit('erase_cell');
     }
 
     public paintCell(i: number, j: number, k: number): void {
@@ -244,7 +246,7 @@ export class CellMeshSet extends EventEmitter {
         }
 
         this.updateEdges(i, j, k);
-        this.emit('paintCell');
+        this.emit('paint_cell');
     }
 
     public placeCell(i: number, j: number, k: number): void {
@@ -321,6 +323,7 @@ export class CellMeshSet extends EventEmitter {
         }
     }
 
+    //TODO: Use cells.slice instead of changing each cell individually
     public showDepth(k: number): void {
         for (let i = 0; i < this.shape.dims[0]; i++) {
             for (let j = 0; j < this.shape.dims[1]; j++) {

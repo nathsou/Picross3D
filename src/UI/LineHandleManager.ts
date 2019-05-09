@@ -1,15 +1,17 @@
-import { Raycaster, Vector2, Camera, Vector3, Euler, Mesh, PlaneBufferGeometry, DoubleSide, MeshBasicMaterial, Light, AmbientLight, DirectionalLight, Color } from "three";
-import { LineSelectorHandle } from "./LineSelectorHandle";
-import EventEmitter from "../Utils/EventEmitter";
-import { LineDirection } from "../PicrossShape";
+import { Camera, DoubleSide, Euler, Mesh, MeshBasicMaterial, PlaneBufferGeometry, Raycaster, Vector2, Vector3 } from "three";
 import { OrbitControls } from "../OrbitControls";
+import { LineDirection } from "../PicrossShape";
+import EventEmitter from "../Utils/EventEmitter";
+import { LineSelectorHandle } from "./LineSelectorHandle";
 
 export interface LineRange {
     from: number,
     to: number
 }
 
-export class LineHandleManager extends EventEmitter {
+type LineHandleManagerEventName = 'show_rows' | 'show_depths' | 'hide_depths' | 'hide_rows';
+
+export class LineHandleManager extends EventEmitter<LineHandleManagerEventName> {
 
     private dims: number[];
     private raycaster: Raycaster;
@@ -87,6 +89,11 @@ export class LineHandleManager extends EventEmitter {
     public hideHandles(): void {
         this.handles.row.hide();
         this.handles.depth.hide();
+    }
+
+    public showHandles(): void {
+        this.handles.row.show();
+        this.handles.depth.show();
     }
 
     private onHideRow(nb_hidden_rows: number): void {
@@ -232,7 +239,7 @@ export class LineHandleManager extends EventEmitter {
 
             if (inter.object === this.handles.row.mesh) { // row handle is hovered
                 this.handles.row.onHover();
-            } else { // col handle is hovered
+            } else if (inter.object === this.handles.depth.mesh) { // col handle is hovered
                 this.handles.depth.onHover();
             }
         } else { // no handle hovered

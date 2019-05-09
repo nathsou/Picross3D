@@ -2,7 +2,9 @@ import { Mesh, MeshLambertMaterial, OctahedronBufferGeometry, Vector3 } from "th
 import EventEmitter from "../Utils/EventEmitter";
 import { LineDirection } from "../PicrossShape";
 
-export class LineSelectorHandle extends EventEmitter {
+type LineSelectorHandleEventName = 'hide_line';
+
+export class LineSelectorHandle extends EventEmitter<LineSelectorHandleEventName> {
 
     private _mesh: Mesh;
     private original_position: Vector3;

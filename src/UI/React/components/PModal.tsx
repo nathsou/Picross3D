@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-interface PModalProps {
+export interface PModalProps {
     show?: boolean,
     onClose: () => void,
     title?: string

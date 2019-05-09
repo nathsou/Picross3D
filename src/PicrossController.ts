@@ -3,7 +3,7 @@ import { CellMeshSet } from "./CellMeshSet";
 import { CellSelection } from "./CellSelection";
 import { CellSetRenderer } from "./CellSetRenderer";
 import { OrbitControls } from "./OrbitControls";
-import { PicrossShape } from "./PicrossShape";
+import { PicrossShape, LineDirection } from "./PicrossShape";
 import { LineHandleManager, LineRange } from "./UI/LineHandleManager";
 
 export interface Disposable {
@@ -64,7 +64,7 @@ export abstract class PicrossController implements Disposable {
         this.actions = {
             hammer: { key: hammer, selected: false },
             brush: { key: brush, selected: false },
-            builder: { key: builder, selected: false },
+            builder: { key: builder, selected: false }
         };
 
         this.mouse = new Vector2();
@@ -124,6 +124,11 @@ export abstract class PicrossController implements Disposable {
         for (const [event, listener] of this.event_listeners) {
             this.renderer.domElement.addEventListener(event, listener);
         }
+    }
+
+    protected showAllCells(): void {
+        this.cells.showDepths({ from: 0, to: this.shape.dims[LineDirection.depth] });
+        this.cells.showRows({ from: 0, to: this.shape.dims[LineDirection.row] });
     }
 
     public dispose(): void {

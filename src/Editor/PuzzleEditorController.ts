@@ -44,7 +44,7 @@ export class PuzzleEditorController extends PicrossController {
 
         try {
             const puzzle = PicrossPuzzle.fromJSON(data);
-            const shape = PicrossSolver.solve(puzzle);
+            const shape = PicrossSolver.bruteForceSolve(puzzle);
             if (shape === null) {
                 throw new Error('Puzzle is not linesolvable')
             }
@@ -74,6 +74,7 @@ export class PuzzleEditorController extends PicrossController {
         this.shape.reset();
         this.cells.clear();
         this.cells.update();
+        this.renderer.needsReRender();
     }
 
     // raycast against the floor

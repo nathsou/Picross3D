@@ -1,17 +1,18 @@
-import { HintScorer, lineSolveHintScorer2 } from "./HintScorer";
-import { PicrossPuzzle } from "./../Puzzle/PicrossPuzzle";
 import { CellState, HintType, LineDirection, LineHint, PicrossShape } from "./../PicrossShape";
+import { PicrossPuzzle } from "./../Puzzle/PicrossPuzzle";
 import { compositions, init2dArray, max3d, reverse } from "./../Utils/Utils";
+import { HintScorer, lineSolveHintScorer2 } from "./HintScorer";
+import { coord_x, coord_y, PuzzleGenerator } from "./PuzzleGenerator";
 
 export type LineState = CellState[];
 
-interface BlockPosition {
+export interface BlockPosition {
     start: number,
     len: number
 }
 
-type BlankPosition = BlockPosition;
-type BlockRange = BlockPosition;
+export type BlankPosition = BlockPosition;
+export type BlockRange = BlockPosition;
 
 export interface LineInfo {
     blocks: BlockPosition[],
@@ -331,13 +332,11 @@ export namespace PicrossSolver {
 
     export function blocksIntersection(a: BlockPosition, b: BlockPosition): BlockPosition {
         // make sure that b.start >= a.start
-        [a, b] = [a, b].sort((a, b) => a.start - b.start);
+        // [a, b] = [a, b].sort((a, b) => a.start - b.start);
 
-        /*
         if (a.start > b.start) {
             [a, b] = [b, a];
         }
-        */
 
         if (a.start + a.len > b.start) {
             return {
@@ -441,9 +440,13 @@ export namespace PicrossSolver {
         return null;
     }
 
+    export function isLineSolved(line: CellState[]): boolean {
+        return line.every(cell => cell !== CellState.unknown);
+    }
+
     // bruteforce
-    export function solve(puzzle: PicrossPuzzle): PicrossShape {
-        const shape = new PicrossShape(puzzle.getDimensions(), CellState.unknown);
+    export function bruteForceSolve(puzzle: PicrossPuzzle): PicrossShape {
+        const shape = new PicrossShape(puzzle.dims, CellState.unknown);
 
         const remaining_lines = [
             init2dArray(shape.dims[1], shape.dims[2], true),
@@ -458,9 +461,6 @@ export namespace PicrossSolver {
         ];
 
         let changed = true;
-        // (j, k), (i, k), (i, j)
-        const coord_x = [1, 0, 0]; //j, i, i
-        const coord_y = [2, 2, 1]; //k, k, j
 
         while (changed) {
             changed = false;
@@ -471,12 +471,14 @@ export namespace PicrossSolver {
                         for (let y = 0; y < puzzle.shape.dims[coord_y[d]]; y++) {
                             if (remaining_lines[d][x][y]) {
                                 const state = shape.getLine(x, y, d);
-                                if (state.every(cell => cell !== CellState.unknown)) {
+                                if (isLineSolved(state)) {
                                     remaining_lines[d][x][y] = false;
                                     incomlete_lines_count[d]--;
                                 } else {
                                     const info = lineSolve(puzzle.getLineHint(x, y, d), state);
-                                    changed = shape.setLine(x, y, d, info) || changed;
+                                    if (info !== null && info !== undefined) {
+                                        changed = shape.setLine(x, y, d, info) || changed;
+                                    }
                                 }
                             }
                         }
@@ -497,54 +499,127 @@ export namespace PicrossSolver {
         return shape;
     }
 
-    export function removeHints(
-        puzzle: PicrossPuzzle,
-        max_fails = 100,
-        score_func: HintScorer = lineSolveHintScorer2
-    ): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
-            const hints = puzzle.getHints();
-            const scores: number[][][] = [];
-            const coord_x = [1, 0, 0]; //j, i, i
-            const coord_y = [2, 2, 1]; //k, k, j
+    export function hierarchicalSolve(puzzle: PicrossPuzzle): PicrossShape {
+        const shape = puzzle.shape;
 
-            // assign a score to each hint
-            for (let d: LineDirection = 0; d < 3; d++) {
-                scores.push([]);
-                for (let x = 0; x < puzzle.shape.dims[coord_x[d]]; x++) {
-                    scores[d].push([]);
-                    for (let y = 0; y < puzzle.shape.dims[coord_y[d]]; y++) {
-                        scores[d][x][y] = score_func(hints[d][x][y], x, y, d, puzzle.shape);
+        // const scorer = ({ hint, info, d }: PuzzleGenerator.InfoLineCoords) => {
+        //     if (info !== null && (info.blanks.length !== 0 || info.blocks.length !== 0)) {
+        //         return (info.blocks.reduce((p, c) => p + c.len, 0) +
+        //             info.blanks.reduce((p, c) => p + c.len, 0) +
+        //             hint.num * (hint.type + 1)
+        //         ) / shape.dims[d];
+        //     } else {
+        //         return hint.num / shape.dims[d];
+        //     }
+        // };
+
+        const queue: PuzzleGenerator.InfoLineCoords[] = [];
+
+        const starters = PuzzleGenerator.getInformativeHints(puzzle);
+        queue.push(...starters); //.sort((a, b) => scorer(b) - scorer(a)));
+        // Set of tried hints for a given state of the puzzle
+        const tried_starters = new Set<number>();
+        const coords = [];
+
+        while (queue.length !== 0) {
+            // console.log(queue.length);
+            const { x, y, d, info, state } = queue.pop();
+            if (info !== undefined && info !== null) {
+                const changed = shape.setLine(x, y, d, info);
+                if (changed) {
+                    tried_starters.clear();
+                    const new_state = shape.getLine(x, y, d);
+
+                    coords[coord_x[d]] = x;
+                    coords[coord_y[d]] = y;
+
+                    for (coords[d] = 0; coords[d] < state.length; coords[d]++) {
+                        if (new_state[coords[d]] !== state[coords[d]]) {
+                            queue.push(...PuzzleGenerator.getConnectedLines(
+                                { i: coords[0], j: coords[1], k: coords[2] },
+                                shape.dims
+                            ).map(({ x, y, d, idx }) => {
+                                const state = shape.getLine(x, y, d);
+                                if (isLineSolved(state)) {
+                                    return null;
+                                }
+                                const hint = puzzle.getLineHint(x, y, d);
+                                const info = lineSolve(hint, state);
+                                return { x, y, d, idx, hint, state, info };
+                            }).filter(l => l !== null));
+                        }
                     }
                 }
             }
 
-            // take the top scoring hint
-            // test if the puzzle is linesolvable without it
-            // if it is remove it, else test next best scoring hint
-            let fails = 0;
-            while (fails < max_fails) {
-                const max = max3d(scores);
+            if (queue.length === 0) {
+                const starters = PuzzleGenerator.getInformativeHints(puzzle);
+                if (starters.length !== 0) {
+                    const filtered = starters
+                        .filter(({ state, idx }) => !tried_starters.has(idx) && !isLineSolved(state));
+                    // .sort((a, b) => scorer(a) - scorer(b));
 
-                if (max.value === -Infinity) break;
+                    for (const { idx } of filtered) {
 
-                const hint_copy = { ...hints[max.x][max.y][max.z] };
+                        tried_starters.add(idx);
+                    }
 
-                hints[max.x][max.y][max.z] = null;
-                // make sure this hint won't be selected in the future
-                scores[max.x][max.y][max.z] = -Infinity;
-
-                if (!puzzle.isSolvable()) {
-                    // restore hint
-                    hints[max.x][max.y][max.z] = hint_copy;
-                    fails++;
+                    queue.push(...filtered);
                 } else {
-                    fails = 0;
+                    break;
+                };
+            }
+        }
+
+        if (!puzzle.isResolved()) {
+            return null; // puzzle is not line solvable
+        }
+
+        return shape;
+    }
+
+    export function removeHints(
+        puzzle: PicrossPuzzle,
+        max_fails = 100,
+        score_func: HintScorer = lineSolveHintScorer2
+    ): void {
+        const hints = puzzle.getHints();
+        const scores: number[][][] = [];
+
+        // assign a score to each hint
+        for (let d: LineDirection = 0; d < 3; d++) {
+            scores.push([]);
+            for (let x = 0; x < puzzle.shape.dims[coord_x[d]]; x++) {
+                scores[d].push([]);
+                for (let y = 0; y < puzzle.shape.dims[coord_y[d]]; y++) {
+                    scores[d][x][y] = score_func(hints[d][x][y], x, y, d, puzzle.shape);
                 }
             }
+        }
 
-            resolve();
-        });
+        // take the top scoring hint
+        // test if the puzzle is linesolvable without it
+        // if it is remove it, else test next best scoring hint
+        let fails = 0;
+        while (fails < max_fails) {
+            const { x, y, z, value } = max3d(scores);
+
+            if (value === -Infinity) break;
+
+            const hint_copy = { ...hints[x][y][z] };
+
+            hints[x][y][z] = null;
+            // make sure this hint won't be selected in the future
+            scores[x][y][z] = -Infinity;
+
+            if (!puzzle.isSolvable()) {
+                // restore hint
+                hints[x][y][z] = hint_copy;
+                fails++;
+            } else {
+                fails = 0;
+            }
+        }
     }
 
 }

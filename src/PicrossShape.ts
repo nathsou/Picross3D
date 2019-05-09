@@ -1,7 +1,9 @@
 import { PicrossPuzzle, PuzzleHints } from "./Puzzle/PicrossPuzzle";
 import { LineInfo, LineState } from "./Solver/PicrossSolver";
+import { coord_x, coord_y } from "./Solver/PuzzleGenerator";
 import { Array3D, IterableWritableArrayLike } from "./Utils/Array3D";
 import { boundingBox, Box } from "./Utils/Utils";
+
 
 export type CellCounts = number[][][];
 export type PuzzleDescription = CellCounts[];
@@ -75,8 +77,6 @@ export class PicrossShape {
 
         const min = [this.cells.dims[0], this.cells.dims[1], this.cells.dims[2]];
         const max = [0, 0, 0];
-        const coord_x = [1, 0, 0]; //j, i, i
-        const coord_y = [2, 2, 1]; //k, k, j
         const coords = [];
 
         for (let d = 0; d < 3; d++) {
@@ -251,10 +251,6 @@ export class PicrossShape {
 
         const desc = this.getDescription();
         this.hints = [];
-
-        // (j, k), (i, k), (i, j)
-        const coord_x = [1, 0, 0]; //j, i, i
-        const coord_y = [2, 2, 1]; //k, k, j
 
         for (let d: LineDirection = 0; d < 3; d++) {
             this.hints.push([]);

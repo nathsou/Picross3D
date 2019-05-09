@@ -54,12 +54,12 @@ class PuzzleEditorScreen extends Component<PuzzleEditorScreenProps> {
 
         this.props.isGeneratingPuzzle(true);
 
-        return new Promise<boolean>(async (resolve) => {
+        return new Promise<boolean>((resolve) => {
 
             try {
                 this.shape.trim();
                 const puzzle = new PicrossPuzzle(this.shape);
-                await PicrossSolver.removeHints(puzzle);
+                PicrossSolver.removeHints(puzzle);
                 this.shape.fillBoundingBox();
                 this.props.setHintEditorPuzzle(puzzle.toJSON());
                 resolve(true);
