@@ -290,10 +290,11 @@ export abstract class PicrossController implements Disposable {
     }
 
     protected restore(): void {
-        for (const { coords } of this.shape.editHistory.history) {
-            this.cells.addToQueue(coords[0], coords[1], coords[2]);
-            this.cells.updateEdges(coords[0], coords[1], coords[2]);
-            this.cells.updateNeighbors(coords[0], coords[1], coords[2]);
+        for (const { idx } of this.shape.editHistory.history) {
+            const [i, j, k] = this.cells.cells.idxToCoords(idx);
+            this.cells.addToQueue(i, j, k);
+            this.cells.updateEdges(i, j, k);
+            this.cells.updateNeighbors(i, j, k);
         }
 
         this.shape.restore();

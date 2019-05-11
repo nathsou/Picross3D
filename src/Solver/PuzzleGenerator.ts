@@ -1,23 +1,21 @@
-import { LineDirection, PicrossShape, LineHint, CellState } from "../PicrossShape";
-import { PicrossSolver, LineInfo } from "./PicrossSolver";
+import { LineDirection, LineHint } from "../PicrossShape";
 import { PicrossPuzzle } from "../Puzzle/PicrossPuzzle";
+import { PicrossSolver } from "./PicrossSolver";
 
 export const coord_x = [1, 0, 0]; //j, i, i
 export const coord_y = [2, 2, 1]; //k, k, j
 
+export type LineCoords = { x: number, y: number, d: LineDirection };
+export type IndexedLineCoords = { x: number, y: number, d: LineDirection, idx: number };
+export type InfoLineCoords = { x: number, y: number, d: LineDirection, idx: number, hint: LineHint };
+export type CellCoords = { i: number, j: number, k: number };
+
 export namespace PuzzleGenerator {
-
-    // (j, k), (i, k), (i, j)
-
-    export type LineCoords = { x: number, y: number, d: LineDirection };
-    export type IndexedLineCoords = { x: number, y: number, d: LineDirection, idx: number };
-    export type InfoLineCoords = { x: number, y: number, d: LineDirection, idx: number, info: LineInfo, hint: LineHint, state: CellState[] };
-    export type CellCoords = { i: number, j: number, k: number };
 
     export function getInformativeHints(
         puzzle: PicrossPuzzle,
         removed_hints?: Set<number>
-    ): InfoLineCoords[] {
+    ): IndexedLineCoords[] {
 
         const hints = [];
         let idx = 0;
@@ -31,7 +29,7 @@ export namespace PuzzleGenerator {
                             const state = puzzle.shape.getLine(x, y, d);
                             const info = PicrossSolver.lineSolve(hint, state);
                             if (info && (info.blocks.length !== 0 || info.blanks.length !== 0)) {
-                                hints.push({ x, y, d, idx, info, hint, state });
+                                hints.push({ x, y, d, idx });
                             }
                         }
                     }
@@ -57,28 +55,29 @@ export namespace PuzzleGenerator {
     }
 
     // a.k.a lines to which this cell belongs(1 by direction)
-    export function getConnectedLines(cell: CellCoords, dims: number[]): IndexedLineCoords[] {
+    export function getConnectedLines(
+        cell: CellCoords,
+        dims: number[],
+        excluded_dir: LineDirection = null
+    ): IndexedLineCoords[] {
 
         const { i, j, k } = cell;
 
-        return [
-            { x: j, y: k, d: LineDirection.row, idx: getLineIdx(j, k, LineDirection.row, dims) },
-            { x: i, y: k, d: LineDirection.col, idx: getLineIdx(i, k, LineDirection.col, dims) },
-            { x: i, y: j, d: LineDirection.depth, idx: getLineIdx(i, j, LineDirection.depth, dims) }
-        ];
-    }
+        const lines = [];
 
-    export function isSolvable(puzzle: PicrossPuzzle, removed_hints: Map<number, LineCoords>) {
-        // start from the solution
-        /*
+        if (excluded_dir !== LineDirection.row) {
+            lines.push({ x: j, y: k, d: LineDirection.row, idx: getLineIdx(j, k, LineDirection.row, dims) });
+        }
 
-          2 1 4 1
-        2 _ _ x x
-        1 _ _ x _
-        3 x x x _
-      [2] x _ x _
+        if (excluded_dir !== LineDirection.col) {
+            lines.push({ x: i, y: k, d: LineDirection.col, idx: getLineIdx(i, k, LineDirection.col, dims) });
+        }
 
-        */
+        if (excluded_dir !== LineDirection.row) {
+            lines.push({ x: i, y: j, d: LineDirection.depth, idx: getLineIdx(i, j, LineDirection.depth, dims) });
+        }
+
+        return lines;
     }
 
 }

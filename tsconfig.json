@@ -8,7 +8,9 @@
         "lib": ["webworker", "es2016", "dom"],
         "jsx": "react",
         "allowSyntheticDefaultImports": true,
-        "moduleResolution": "node"
+        "moduleResolution": "node",
+        "resolveJsonModule": true,
+        "esModuleInterop": true
     },
     "exclude": [
         "node_modules"

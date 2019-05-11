@@ -44,7 +44,7 @@ export class PuzzleEditorController extends PicrossController {
 
         try {
             const puzzle = PicrossPuzzle.fromJSON(data);
-            const shape = PicrossSolver.bruteForceSolve(puzzle);
+            const shape = PicrossSolver.hierarchicalSolve(puzzle);
             if (shape === null) {
                 throw new Error('Puzzle is not linesolvable')
             }

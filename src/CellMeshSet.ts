@@ -9,7 +9,7 @@ type CellMeshSetEventName = 'paint_cell' | 'erase_cell';
 
 export class CellMeshSet extends EventEmitter<CellMeshSetEventName> {
 
-    private cells: Array3D<Mesh>;
+    private _cells: Array3D<Mesh>;
     private shape: PicrossShape;
     private raycastables: Object3D[];
     private renderer: CellSetRenderer;
@@ -52,7 +52,7 @@ export class CellMeshSet extends EventEmitter<CellMeshSetEventName> {
 
     public generateMeshes(): void {
 
-        this.cells = new Array3D([], this.shape.dims);
+        this._cells = new Array3D([], this.shape.dims);
 
         // generate cells
         for (let i = 0; i < this.shape.dims[0]; i++) {
@@ -70,12 +70,12 @@ export class CellMeshSet extends EventEmitter<CellMeshSetEventName> {
     // when a selection of multiple cells is made
     // queuing the calls makes cellVisible() accurate
     public addToQueue(i: number, j: number, k: number): void {
-        this.cells_to_update.add(this.cells.idx(i, j, k));
+        this.cells_to_update.add(this._cells.idx(i, j, k));
     }
 
     private clearQueue(): void {
         for (const cell of this.cells_to_update) {
-            const coords = this.cells.idxToCoords(cell);
+            const coords = this._cells.idxToCoords(cell);
             this.updateCell(coords[0], coords[1], coords[2]);
         }
 
@@ -104,7 +104,7 @@ export class CellMeshSet extends EventEmitter<CellMeshSetEventName> {
         // if there is no visible face
         if (!visible_faces.some(face => face)) return;
 
-        let mesh: Mesh = this.cells.at(i, j, k);
+        let mesh: Mesh = this._cells.at(i, j, k);
 
         if (mesh !== undefined) {
             (mesh.geometry as BufferGeometry).clearGroups();
@@ -118,7 +118,7 @@ export class CellMeshSet extends EventEmitter<CellMeshSetEventName> {
             mesh.position.set(i, j, k);
             this.renderer.addCell(mesh);
             this.raycastables.push(mesh);
-            this.cells.set(i, j, k, mesh);
+            this._cells.set(i, j, k, mesh);
         }
 
         const geo = mesh.geometry as BufferGeometry;
@@ -157,7 +157,7 @@ export class CellMeshSet extends EventEmitter<CellMeshSetEventName> {
             this.renderer.removeObject3D(cell);
         }
 
-        this.cells.clear();
+        this._cells.clear();
     }
 
     public rayCast(raycaster: Raycaster, builder: boolean): { pos: number[], face: Face3 } {
@@ -169,7 +169,7 @@ export class CellMeshSet extends EventEmitter<CellMeshSetEventName> {
 
             const pos = inter.object.position;
 
-            if (this.cells.at(pos.x, pos.y, pos.z) !== undefined) {
+            if (this._cells.at(pos.x, pos.y, pos.z) !== undefined) {
                 if (!builder) {
                     return {
                         pos: pos.toArray(),
@@ -192,7 +192,7 @@ export class CellMeshSet extends EventEmitter<CellMeshSetEventName> {
     }
 
     private cellHidden(i: number, j: number, k: number): boolean {
-        const cell = this.cells.at(i, j, k);
+        const cell = this._cells.at(i, j, k);
         return cell !== undefined && !cell.visible;
     }
 
@@ -218,14 +218,14 @@ export class CellMeshSet extends EventEmitter<CellMeshSetEventName> {
             return;
         }
 
-        const cell = this.cells.at(i, j, k);
+        const cell = this._cells.at(i, j, k);
         const idx = this.raycastables.indexOf(cell);
         if (idx !== -1) {
             this.raycastables.splice(idx, 1);
         }
         this.shape.setCell(i, j, k, CellState.blank);
         this.renderer.removeCell(cell);
-        this.cells.set(i, j, k, undefined);
+        this._cells.set(i, j, k, undefined);
         this.updateNeighbors(i, j, k);
         this.updateEdges(i, j, k);
 
@@ -280,14 +280,14 @@ export class CellMeshSet extends EventEmitter<CellMeshSetEventName> {
     }
 
     private hideCell(i: number, j: number, k: number): void {
-        const cell = this.cells.at(i, j, k);
+        const cell = this._cells.at(i, j, k);
         if (cell) {
             cell.visible = false;
         }
     }
 
     private showCell(i: number, j: number, k: number): void {
-        const cell = this.cells.at(i, j, k);
+        const cell = this._cells.at(i, j, k);
         if (cell) {
             cell.visible = true;
         }
@@ -360,6 +360,10 @@ export class CellMeshSet extends EventEmitter<CellMeshSetEventName> {
 
     public get cellCount(): number {
         return this.raycastables.length;
+    }
+
+    public get cells(): Array3D<Mesh> {
+        return this._cells;
     }
 
     public update(): void {

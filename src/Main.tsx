@@ -1,18 +1,13 @@
 import { library as font_awesome_library } from '@fortawesome/fontawesome-svg-core';
+import { faCircle, faDotCircle } from '@fortawesome/free-regular-svg-icons';
 import { faBars, faChevronLeft, faEraser } from '@fortawesome/free-solid-svg-icons';
-import { faDotCircle, faCircle } from '@fortawesome/free-regular-svg-icons';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
+import ControlsManager from './UI/React/components/ControlsManager';
 import ScreenSelector from './UI/React/components/ScreenSelector';
 import { configureStore } from './UI/React/store/store';
 import './UI/React/style/picross-gui.css';
-import ControlsManager from './UI/React/components/ControlsManager';
-import * as Utils from './Utils/Utils';
-import { PuzzleGenerator } from './Solver/PuzzleGenerator';
-import { PicrossPuzzle } from './Puzzle/PicrossPuzzle';
-import { PicrossSolver } from './Solver/PicrossSolver';
-import { collections } from './PuzzleCollections/PuzzleCollections';
 
 font_awesome_library.add(faBars, faDotCircle, faChevronLeft, faCircle, faEraser);
 
@@ -24,16 +19,6 @@ ReactDOM.render(
     document.getElementById('root')
 );
 
-///@ts-ignore
-window['PuzzleGenerator'] = PuzzleGenerator;
-///@ts-ignore
-window['Utils'] = Utils;
-///@ts-ignore
-window['PicrossPuzzle'] = PicrossPuzzle;
-///@ts-ignore
-window['PicrossSolver'] = PicrossSolver;
-///@ts-ignore
-window['collections'] = collections;
 
 /*
     TODO:

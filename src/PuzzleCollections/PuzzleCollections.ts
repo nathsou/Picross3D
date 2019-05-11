@@ -26,11 +26,4 @@ export const collections: { [key: string]: PuzzleCollection } = {
     nature: [
         puzzles.strange_tree
     ],
-
-    // collection1: [],
-    // collection2: [],
-    // collection3: [],
-    // collection4: [],
-    // collection5: [],
-    // collection6: [],
 };

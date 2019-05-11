@@ -1,4 +1,3 @@
-import { PicrossPuzzle, PuzzleHints } from "./Puzzle/PicrossPuzzle";
 import { LineInfo, LineState } from "./Solver/PicrossSolver";
 import { coord_x, coord_y } from "./Solver/PuzzleGenerator";
 import { Array3D, IterableWritableArrayLike } from "./Utils/Array3D";
@@ -33,7 +32,7 @@ export interface LineHint {
 export interface ShapeEdit {
     from: CellState,
     to: CellState,
-    coords: number[]
+    idx: number
 }
 
 export interface ShapeEditHistory {
@@ -45,8 +44,6 @@ export class PicrossShape {
 
     private cells: Array3D<CellState>;
     private edits_history: ShapeEdit[];
-    private hints: PuzzleHints;
-    private needs_new_hints = true;
 
     constructor(cells: ArrayLike<CellState> | Uint8Array, bounds: number[]);
     constructor(dims: number[], fill_with: CellState);
@@ -115,8 +112,9 @@ export class PicrossShape {
         const changed = prev !== state;
 
         if (changed) {
-            this.edits_history.push({ from: prev, to: state, coords: [i, j, k] });
-            this.cells.set(i, j, k, state);
+            const idx = this.cells.idx(i, j, k);
+            this.edits_history.push({ from: prev, to: state, idx: idx });
+            this.cells.setAtIdx(idx, state);
         }
 
         return changed;
@@ -235,7 +233,7 @@ export class PicrossShape {
         return depth_counts;
     }
 
-    public getDescription(): PuzzleDescription {
+    public get description(): PuzzleDescription {
 
         return [
             this.getRowCellCounts(),
@@ -244,29 +242,6 @@ export class PicrossShape {
         ];
     }
 
-    public getHints(): PuzzleHints {
-        if (!this.needs_new_hints) {
-            return this.hints;
-        }
-
-        const desc = this.getDescription();
-        this.hints = [];
-
-        for (let d: LineDirection = 0; d < 3; d++) {
-            this.hints.push([]);
-            for (let x = 0; x < this.dims[coord_x[d]]; x++) {
-                const line: LineHint[] = [];
-                for (let y = 0; y < this.dims[coord_y[d]]; y++) {
-                    line.push(PicrossPuzzle.cellCountToHint(desc[d][x][y]));
-                }
-                this.hints[d].push(line);
-            }
-        }
-
-        this.needs_new_hints = false;
-
-        return this.hints;
-    }
 
     public getRow(j: number, k: number): LineState {
         const row = [];
@@ -333,8 +308,6 @@ export class PicrossShape {
             }
         }
 
-        this.needs_new_hints = changed;
-
         return changed;
     }
 
@@ -358,8 +331,6 @@ export class PicrossShape {
             }
         }
 
-        this.needs_new_hints = changed;
-
         return changed;
     }
 
@@ -382,8 +353,6 @@ export class PicrossShape {
                 changed = this.setCell(i, j, k, CellState.blank) || changed;
             }
         }
-
-        this.needs_new_hints = changed;
 
         return changed;
     }
@@ -422,14 +391,6 @@ export class PicrossShape {
         return edges;
     }
 
-    public getLineHint(x: number, y: number, d: LineDirection): LineHint {
-        if (this.getHints()[d].length - 1 < x) {
-            return null;
-        }
-
-        return this.getHints()[d][x][y];
-    }
-
     // static methods
 
     public static generate(
@@ -458,16 +419,16 @@ export class PicrossShape {
     }
 
     public restore(): void {
-        for (const { from, coords } of this.edits_history) {
-            this.cells.set(coords[0], coords[1], coords[2], from)
+        for (const { from, idx: at } of this.edits_history) {
+            this.cells.setAtIdx(at, from);
         }
 
         this.edits_history = [];
     }
 
     public reset(): void {
-        for (const { coords } of this.edits_history) {
-            this.cells.set(coords[0], coords[1], coords[2], CellState.blank);
+        for (const { idx: at } of this.edits_history) {
+            this.cells.setAtIdx(at, CellState.blank);
         }
 
         this.edits_history = [];

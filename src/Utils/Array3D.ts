@@ -38,6 +38,10 @@ export class Array3D<T> {
         this._data[this._offset + i * this._strides[0] + j * this._strides[1] + k * this._strides[2]] = val;
     }
 
+    public setAtIdx(idx: number, val: T): void {
+        this._data[idx] = val;
+    }
+
     public low(w: number, h: number, d: number): Array3D<T> {
         const new_dims = [
             this._dims[0] - w,

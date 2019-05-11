@@ -62,6 +62,7 @@ class PuzzleEditorScreen extends Component<PuzzleEditorScreenProps> {
                 PicrossSolver.removeHints(puzzle);
                 this.shape.fillBoundingBox();
                 this.props.setHintEditorPuzzle(puzzle.toJSON());
+                this.props.isGeneratingPuzzle(false);
                 resolve(true);
             } catch (e) {
                 console.error(e);

@@ -1,8 +1,9 @@
+import { QueuedSet } from "../Utils/QueuedSet";
 import { CellState, HintType, LineDirection, LineHint, PicrossShape } from "./../PicrossShape";
 import { PicrossPuzzle } from "./../Puzzle/PicrossPuzzle";
 import { compositions, init2dArray, max3d, reverse } from "./../Utils/Utils";
-import { HintScorer, lineSolveHintScorer2 } from "./HintScorer";
-import { coord_x, coord_y, PuzzleGenerator } from "./PuzzleGenerator";
+import { HintScorer, lineSolveHintScorer2, hierarchicalHintScorer } from "./HintScorer";
+import { coord_x, coord_y, IndexedLineCoords, PuzzleGenerator } from "./PuzzleGenerator";
 
 export type LineState = CellState[];
 
@@ -446,7 +447,8 @@ export namespace PicrossSolver {
 
     // bruteforce
     export function bruteForceSolve(puzzle: PicrossPuzzle): PicrossShape {
-        const shape = new PicrossShape(puzzle.dims, CellState.unknown);
+        puzzle.restart();
+        const shape = puzzle.shape;
 
         const remaining_lines = [
             init2dArray(shape.dims[1], shape.dims[2], true),
@@ -487,91 +489,118 @@ export namespace PicrossSolver {
             }
         }
 
+
         if (
             incomlete_lines_count[0] > 0 &&
             incomlete_lines_count[1] > 0 &&
             incomlete_lines_count[2] > 0
         ) {
-            return null;
-            // throw new Error(`LineSolver stuck at iteratiton ${iter}, puzzle might not be line solvable`);
+            return null; // not line solvable
         }
 
         return shape;
     }
 
-    export function hierarchicalSolve(puzzle: PicrossPuzzle): PicrossShape {
+    function countHints(hints: LineHint[][][]) {
+        let count = 0;
+
+        for (let i = 0; i < hints.length; i++) {
+            const h1 = hints[i];
+            for (let j = 0; j < h1.length; j++) {
+                const h2 = hints[i][j];
+                for (let k = 0; k < h2.length; k++) {
+                    if (h2[k] !== null) {
+                        count++;
+                    }
+                }
+            }
+        }
+
+        return count;
+        // return hints.flat(2).filter(h => h !== null).length;
+    }
+
+    export function hierarchicalSolve(
+        puzzle: PicrossPuzzle,
+        hint_scorer: HintScorer = hierarchicalHintScorer
+    ): PicrossShape {
+
+        puzzle.restart();
         const shape = puzzle.shape;
 
-        // const scorer = ({ hint, info, d }: PuzzleGenerator.InfoLineCoords) => {
-        //     if (info !== null && (info.blanks.length !== 0 || info.blocks.length !== 0)) {
-        //         return (info.blocks.reduce((p, c) => p + c.len, 0) +
-        //             info.blanks.reduce((p, c) => p + c.len, 0) +
-        //             hint.num * (hint.type + 1)
-        //         ) / shape.dims[d];
-        //     } else {
-        //         return hint.num / shape.dims[d];
-        //     }
-        // };
-
-        const queue: PuzzleGenerator.InfoLineCoords[] = [];
-
-        const starters = PuzzleGenerator.getInformativeHints(puzzle);
-        queue.push(...starters); //.sort((a, b) => scorer(b) - scorer(a)));
+        const queue = new QueuedSet<IndexedLineCoords, number>(({ idx }) => idx);
+        const solved_lines = new Set<number>();
         // Set of tried hints for a given state of the puzzle
         const tried_starters = new Set<number>();
+
+
+        const scorer = (a: IndexedLineCoords, b: IndexedLineCoords) =>
+            hint_scorer(puzzle.getLineHint(b.x, b.y, b.d), b.x, b.y, b.d, shape) -
+            hint_scorer(puzzle.getLineHint(a.x, a.y, a.d), a.x, a.y, a.d, shape);
+
+        const nb_hints_to_solve = countHints(puzzle.hints);
+        const starters = PuzzleGenerator.getInformativeHints(puzzle);
+        queue.enqueue(...starters.sort(scorer));
         const coords = [];
 
-        while (queue.length !== 0) {
-            // console.log(queue.length);
-            const { x, y, d, info, state } = queue.pop();
-            if (info !== undefined && info !== null) {
+        while (queue.size !== 0) {
+            const { x, y, d, idx } = queue.dequeue();
+            const hint = puzzle.getLineHint(x, y, d);
+            if (hint === null) continue;
+            const state = shape.getLine(x, y, d);
+            const info = lineSolve(hint, state);
+
+            if (info) {
                 const changed = shape.setLine(x, y, d, info);
+                const new_state = shape.getLine(x, y, d);
+
+                if (isLineSolved(new_state)) {
+                    solved_lines.add(idx);
+                }
+
                 if (changed) {
                     tried_starters.clear();
-                    const new_state = shape.getLine(x, y, d);
 
                     coords[coord_x[d]] = x;
                     coords[coord_y[d]] = y;
 
+                    // Add perpendicular cells to the queue
                     for (coords[d] = 0; coords[d] < state.length; coords[d]++) {
                         if (new_state[coords[d]] !== state[coords[d]]) {
-                            queue.push(...PuzzleGenerator.getConnectedLines(
-                                { i: coords[0], j: coords[1], k: coords[2] },
-                                shape.dims
-                            ).map(({ x, y, d, idx }) => {
-                                const state = shape.getLine(x, y, d);
-                                if (isLineSolved(state)) {
-                                    return null;
-                                }
-                                const hint = puzzle.getLineHint(x, y, d);
-                                const info = lineSolve(hint, state);
-                                return { x, y, d, idx, hint, state, info };
-                            }).filter(l => l !== null));
+                            queue.enqueue(...PuzzleGenerator.getConnectedLines({
+                                i: coords[0],
+                                j: coords[1],
+                                k: coords[2]
+                            },
+                                shape.dims,
+                                d
+                            ).filter(({ x, y, d, idx }) =>
+                                !solved_lines.has(idx) &&
+                                puzzle.hasHint(x, y, d)
+                            ).sort(scorer));
                         }
                     }
                 }
             }
 
-            if (queue.length === 0) {
-                const starters = PuzzleGenerator.getInformativeHints(puzzle);
+            // check if no more informative hints exist, otherwise, add them to the queue
+            if (queue.size === 0) {
+                const starters = PuzzleGenerator.getInformativeHints(puzzle, solved_lines);
                 if (starters.length !== 0) {
-                    const filtered = starters
-                        .filter(({ state, idx }) => !tried_starters.has(idx) && !isLineSolved(state));
-                    // .sort((a, b) => scorer(a) - scorer(b));
+                    const filtered = starters.filter(({ idx }) => !tried_starters.has(idx));
 
                     for (const { idx } of filtered) {
-
                         tried_starters.add(idx);
                     }
 
-                    queue.push(...filtered);
+                    queue.enqueue(...filtered.sort(scorer));
                 } else {
                     break;
                 };
             }
         }
 
-        if (!puzzle.isResolved()) {
+        if (solved_lines.size !== nb_hints_to_solve) {
             return null; // puzzle is not line solvable
         }
 
@@ -583,7 +612,7 @@ export namespace PicrossSolver {
         max_fails = 100,
         score_func: HintScorer = lineSolveHintScorer2
     ): void {
-        const hints = puzzle.getHints();
+        const hints = puzzle.hints;
         const scores: number[][][] = [];
 
         // assign a score to each hint

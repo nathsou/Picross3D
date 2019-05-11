@@ -50,3 +50,13 @@ export const lineSolveHintScorer2: HintScorer = (
 
     return score;
 };
+
+export const hierarchicalHintScorer: HintScorer = (
+    hint: LineHint,
+    x: number,
+    y: number,
+    d: LineDirection,
+    shape: PicrossShape
+) => {
+    return hint.num === 0 ? Infinity : hint.num + hint.type;
+};

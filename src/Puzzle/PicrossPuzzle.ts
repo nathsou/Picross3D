@@ -10,7 +10,7 @@ export type PicrossPuzzleEventName = 'resolved';
 
 export class PicrossPuzzle extends EventEmitter<PicrossPuzzleEventName> {
 
-    private hints: PuzzleHints;
+    private _hints: PuzzleHints;
     private _shape: PicrossShape;
     private _dims: number[];
     private _name = 'Untitled Puzzle';
@@ -24,12 +24,12 @@ export class PicrossPuzzle extends EventEmitter<PicrossPuzzleEventName> {
         super();
         if (arguments.length === 2) {
             this._dims = dims_or_shape as number[];
-            this.hints = hints_or_name as PuzzleHints;
+            this._hints = hints_or_name as PuzzleHints;
             this._shape = new PicrossShape(this._dims, CellState.unknown);
         } else {
             this._shape = dims_or_shape as PicrossShape;
-            this.hints = this._shape.getHints();
             this._dims = this._shape.dims;
+            this.hints; //generate hints
             this._shape = new PicrossShape(this._dims, CellState.unknown);
         }
     }
@@ -119,14 +119,6 @@ export class PicrossPuzzle extends EventEmitter<PicrossPuzzleEventName> {
         this.on('resolved', handler);
     }
 
-    public getLineHint(x: number, y: number, d: LineDirection): LineHint {
-        if (this.hints[d].length - 1 < x) {
-            return null;
-        }
-
-        return this.hints[d][x][y];
-    }
-
     public hasHint(x: number, y: number, d: LineDirection): boolean {
         if (this.hints[d].length - 1 < x) {
             return false;
@@ -135,12 +127,35 @@ export class PicrossPuzzle extends EventEmitter<PicrossPuzzleEventName> {
         return this.hints[d][x][y] !== null;
     }
 
-    public getDimensions(): number[] {
-        return this._shape.dims;
+
+    public get hints(): PuzzleHints {
+        if (this._hints !== undefined) {
+            return this._hints;
+        }
+
+        const desc = this._shape.description;
+        this._hints = [];
+
+        for (let d: LineDirection = 0; d < 3; d++) {
+            this._hints.push([]);
+            for (let x = 0; x < this.dims[coord_x[d]]; x++) {
+                const line: LineHint[] = [];
+                for (let y = 0; y < this.dims[coord_y[d]]; y++) {
+                    line.push(PicrossPuzzle.cellCountToHint(desc[d][x][y]));
+                }
+                this._hints[d].push(line);
+            }
+        }
+
+        return this._hints;
     }
 
-    public getHints(): PuzzleHints {
-        return this.hints;
+    public getLineHint(x: number, y: number, d: LineDirection): LineHint {
+        if (this.hints[d].length - 1 < x) {
+            return null;
+        }
+
+        return this.hints[d][x][y];
     }
 
     public get shape(): PicrossShape {
@@ -152,7 +167,7 @@ export class PicrossPuzzle extends EventEmitter<PicrossPuzzleEventName> {
     }
 
     public isSolvable(): boolean {
-        return PicrossSolver.bruteForceSolve(this) !== null;
+        return PicrossSolver.hierarchicalSolve(this) !== null;
     }
 
     public static cellCountToHint(seq: number[]): LineHint {
@@ -169,7 +184,7 @@ export class PicrossPuzzle extends EventEmitter<PicrossPuzzleEventName> {
 
     public toJSON(): PuzzleJSON {
         return {
-            dims: this.getDimensions(),
+            dims: this.dims,
             hints: this.hints,
             name: this._name
         };

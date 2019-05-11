@@ -1,24 +1,12 @@
-
-// async function fetchPuzzle(path) {
-//     return await (await fetch(`../../res/puzzles/${collection}/${name}.json`));
-// }
-
-///@ts-ignore
 import horse from '../../res/puzzles/animals/horse.json';
-///@ts-ignore
 import platypus from '../../res/puzzles/animals/platypus.json';
-///@ts-ignore
 import pyramid from '../../res/puzzles/egypt/pyramid.json';
-///@ts-ignore
 import sphinx from '../../res/puzzles/egypt/sphinx.json';
-///@ts-ignore
 import chair from '../../res/puzzles/furniture/chair.json';
-///@ts-ignore
 import computer from '../../res/puzzles/furniture/computer.json';
-///@ts-ignore
 import strange_tree from '../../res/puzzles/nature/strange_tree.json';
-///@ts-ignore
 import simple_hints from '../../res/puzzles/tutorial/simple_hints.json';
+
 import { PuzzleHints } from "./PicrossPuzzle";
 import { isObject } from '../Utils/Utils';
 
