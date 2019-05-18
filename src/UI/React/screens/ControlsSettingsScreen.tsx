@@ -27,7 +27,13 @@ class ControlsSettingsScreen extends Component<ControlsSettingsScreenProps> {
 
         this.props.setListeningActionKey(action);
         this.key_listener = (ev: KeyboardEvent) => {
-            this.props.setActionKey(action, ev.code);
+            if ( // check that the key is not alrready used
+                Object.keys(this.props.controls)
+                    .filter(a => a !== action)
+                    .every(a => this.props.controls[a as PicrossAction] !== ev.code)
+            ) {
+                this.props.setActionKey(action, ev.code);
+            }
             this.props.setListeningActionKey(null);
             window.removeEventListener('keydown', this.key_listener);
         };

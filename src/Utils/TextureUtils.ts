@@ -72,21 +72,4 @@ export namespace TextureUtils {
         return tex;
     }
 
-    export function generateBitmap(
-        width: number,
-        height: number,
-        draw_func: (ctx: CanvasRenderingContext2D) => void
-    ): Promise<ImageBitmap> {
-        const cnv = document.createElement('canvas');
-        const dpr = window.devicePixelRatio || 1;
-        cnv.width = width * dpr;
-        cnv.height = height * dpr;
-        const ctx = cnv.getContext('2d');
-        ctx.scale(dpr, dpr);
-        draw_func(ctx);
-
-        /// @ts-ignore
-        return createImageBitmap(cnv);
-    }
-
 }

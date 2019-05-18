@@ -400,3 +400,15 @@ export function capitalize(str: string): string {
 export function snakify(str: string): string {
     return str.toLowerCase().split(' ').join('_');
 }
+
+export function range(from: number, to: number, step = 1): number[] {
+    if (step === 0) return null;
+
+    const rng = new Array((to - from) / step);
+
+    for (let i = from; i < to; i += step) {
+        rng.push(i);
+    }
+
+    return rng;
+}

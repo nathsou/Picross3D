@@ -150,6 +150,8 @@ export class CellMeshSet extends EventEmitter<CellMeshSetEventName> {
         if (this.needs_normals) {
             geo.addAttribute('normal', new BufferAttribute(new Float32Array(normals), 3));
         }
+
+        this.renderer.needsReRender();
     }
 
     public clear(): void {

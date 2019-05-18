@@ -10,7 +10,8 @@ export const collections: { [key: string]: PuzzleCollection } = {
 
     animals: [
         puzzles.horse,
-        puzzles.platypus
+        puzzles.platypus,
+        puzzles.suzanne
     ],
 
     furniture: [

@@ -1,5 +1,6 @@
 import horse from '../../res/puzzles/animals/horse.json';
 import platypus from '../../res/puzzles/animals/platypus.json';
+import suzanne from '../../res/puzzles/animals/suzanne.json';
 import pyramid from '../../res/puzzles/egypt/pyramid.json';
 import sphinx from '../../res/puzzles/egypt/sphinx.json';
 import chair from '../../res/puzzles/furniture/chair.json';
@@ -36,6 +37,7 @@ export function isPuzzleJSON(json: any): json is PuzzleJSON {
 export const puzzles: { [key: string]: PuzzleJSON } = {
     horse,
     platypus,
+    suzanne,
     chair,
     computer,
     sphinx,

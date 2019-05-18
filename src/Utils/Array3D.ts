@@ -85,8 +85,8 @@ export class Array3D<T> {
     public idxToCoords(idx: number): number[] {
 
         const _idx = idx - this._offset;
-        const k = Math.floor(_idx / this._strides[2])
-        const j = Math.floor((_idx % this._strides[2]) / this._strides[1])
+        const k = Math.floor(_idx / this._strides[2]);
+        const j = Math.floor((_idx % this._strides[2]) / this._strides[1]);
         const i = Math.floor((_idx % this._strides[1]) / this._strides[0]);
 
         return [i, j, k];

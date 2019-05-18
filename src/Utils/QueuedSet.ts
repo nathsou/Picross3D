@@ -1,23 +1,25 @@
+import { ArrayCollection } from "./ArrayCollection";
 
 export type Serializable = number | string;
 
 export type IdGetter<T, K extends Serializable> = (val: T) => K;
 
 // A queue with unique elements, identified by an id
-export class QueuedSet<T, K extends Serializable> {
+export class QueuedSet<T, K extends Serializable = number> {
 
     private ids: Set<K>;
-    private values: T[];
+    protected values: ArrayCollection<T>;
     private id_getter: IdGetter<T, K>;
 
     constructor(id_getter: IdGetter<T, K>, ...vals: readonly T[]) {
         this.ids = new Set<K>();
-        this.values = [];
+        this.values = new ArrayCollection<T>(...vals);
+
         this.id_getter = id_getter;
-        this.enqueue(...vals);
+        this.add(...vals);
     }
 
-    public enqueue(...vals: T[]): void {
+    public add(...vals: T[]): void {
         for (const val of vals) {
             const id = this.id_getter(val);
             if (!this.ids.has(id)) {
@@ -27,7 +29,7 @@ export class QueuedSet<T, K extends Serializable> {
         }
     }
 
-    public dequeue(): T {
+    public pop(): T {
         const val = this.values.pop();
         this.ids.delete(this.id_getter(val));
 
@@ -36,10 +38,14 @@ export class QueuedSet<T, K extends Serializable> {
 
     public clear(): void {
         this.ids.clear();
-        this.values = [];
+        this.values.clear();
     }
 
     public get size(): number {
         return this.ids.size;
+    }
+
+    public empty(): boolean {
+        return this.ids.size === 0;
     }
 }

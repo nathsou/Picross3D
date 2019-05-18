@@ -4,7 +4,15 @@
 
 [<img src='res/imgs/chair.png' alt='Demo puzzle' width='400'/>](https://nathsou.github.io/Picross3D/dist/index.html)
 
-# How to play?
+## Features
+
+- Puzzle Solver
+- Puzzle Editor
+- Multiple cell selection (drag mouse while down)
+- .OBJ model to puzzle converter
+- Export/Import puzzles to/from JSON
+
+## How to play?
 
 The aim of a puzzle is to remove blocks according to the given hints in order to reveal the underlying shape.
 
@@ -40,9 +48,3 @@ Indicates that there are 3 blocks in the line, split in 2 groups exactly.
 
 Indicates that there are 7 blocks in the line, split in at least 3 groups.
 
-## Features
-
-- Puzzle Editor
-- Multiple block selection (drag mouse while down)
-- .OBJ model to puzzle converter
-- Export puzzles to JSON

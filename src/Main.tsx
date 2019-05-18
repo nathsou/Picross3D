@@ -19,7 +19,6 @@ ReactDOM.render(
     document.getElementById('root')
 );
 
-
 /*
     TODO:
  - Compress JSON representation (run-box encoding + array with indices of used hints)

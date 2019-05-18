@@ -42,7 +42,7 @@ export interface ShapeEditHistory {
 
 export class PicrossShape {
 
-    private cells: Array3D<CellState>;
+    private _cells: Array3D<CellState>;
     private edits_history: ShapeEdit[];
 
     constructor(cells: ArrayLike<CellState> | Uint8Array, bounds: number[]);
@@ -50,7 +50,7 @@ export class PicrossShape {
     constructor(dims_or_cells: number[] | Uint8Array | CellState[], bounds_or_state: number[] | CellState) {
 
         if (Array.isArray(bounds_or_state)) {
-            this.cells = new Array3D(
+            this._cells = new Array3D(
                 dims_or_cells instanceof Uint8Array ? dims_or_cells :
                     new Uint8Array(dims_or_cells),
                 bounds_or_state
@@ -59,7 +59,7 @@ export class PicrossShape {
         } else {
             const data = new Uint8Array(dims_or_cells[0] * dims_or_cells[1] * dims_or_cells[2]);
             data.fill(bounds_or_state);
-            this.cells = new Array3D(data, dims_or_cells as number[]);
+            this._cells = new Array3D(data, dims_or_cells as number[]);
         }
 
         this.edits_history = [];
@@ -67,27 +67,27 @@ export class PicrossShape {
 
     public trim(): void {
         const bounding_box = this.computeBoundingBox();
-        this.cells.slice(bounding_box.start, bounding_box.start.map((p, i) => p + bounding_box.dims[i]));
+        this._cells.slice(bounding_box.start, bounding_box.start.map((p, i) => p + bounding_box.dims[i]));
     }
 
     private computeBoundingBox(): Box {
 
-        const min = [this.cells.dims[0], this.cells.dims[1], this.cells.dims[2]];
+        const min = [this._cells.dims[0], this._cells.dims[1], this._cells.dims[2]];
         const max = [0, 0, 0];
         const coords = [];
 
         for (let d = 0; d < 3; d++) {
-            for (coords[coord_x[d]] = 0; coords[coord_x[d]] < this.cells.dims[coord_x[d]]; coords[coord_x[d]]++) {
-                for (coords[coord_y[d]] = 0; coords[coord_y[d]] < this.cells.dims[coord_y[d]]; coords[coord_y[d]]++) {
+            for (coords[coord_x[d]] = 0; coords[coord_x[d]] < this._cells.dims[coord_x[d]]; coords[coord_x[d]]++) {
+                for (coords[coord_y[d]] = 0; coords[coord_y[d]] < this._cells.dims[coord_y[d]]; coords[coord_y[d]]++) {
                     for (coords[d] = 0; coords[d] < min[d]; coords[d]++) {
-                        if (this.cells.at(coords[0], coords[1], coords[2]) !== CellState.blank) {
+                        if (this._cells.at(coords[0], coords[1], coords[2]) !== CellState.blank) {
                             min[d] = coords[d];
                             break;
                         }
                     }
 
-                    for (coords[d] = this.cells.dims[d] - 1; coords[d] >= max[d]; coords[d]--) {
-                        if (this.cells.at(coords[0], coords[1], coords[2]) !== CellState.blank) {
+                    for (coords[d] = this._cells.dims[d] - 1; coords[d] >= max[d]; coords[d]--) {
+                        if (this._cells.at(coords[0], coords[1], coords[2]) !== CellState.blank) {
                             max[d] = coords[d];
                             break;
                         }
@@ -108,13 +108,13 @@ export class PicrossShape {
             return false;
         }
 
-        const prev = this.cells.at(i, j, k);
+        const prev = this._cells.at(i, j, k);
         const changed = prev !== state;
 
         if (changed) {
-            const idx = this.cells.idx(i, j, k);
+            const idx = this._cells.idx(i, j, k);
             this.edits_history.push({ from: prev, to: state, idx: idx });
-            this.cells.setAtIdx(idx, state);
+            this._cells.setAtIdx(idx, state);
         }
 
         return changed;
@@ -128,7 +128,7 @@ export class PicrossShape {
             return CellState.blank;
         }
 
-        return this.cells.at(i, j, k);
+        return this._cells.at(i, j, k);
     }
 
     public cellExists(i: number, j: number, k: number): boolean {
@@ -136,12 +136,12 @@ export class PicrossShape {
         return c !== undefined && c !== CellState.blank;
     }
 
-    public getCells(): Array3D<number> {
-        return this.cells;
+    public get cells(): Array3D<number> {
+        return this._cells;
     }
 
     public get dims(): number[] {
-        return this.cells.dims;
+        return this._cells.dims;
     }
 
 
@@ -418,9 +418,14 @@ export class PicrossShape {
         };
     }
 
+    public set editHistory(eh: ShapeEditHistory) {
+        this.editHistory.dims = eh.dims;
+        this.editHistory.history = eh.history;
+    }
+
     public restore(): void {
         for (const { from, idx: at } of this.edits_history) {
-            this.cells.setAtIdx(at, from);
+            this._cells.setAtIdx(at, from);
         }
 
         this.edits_history = [];
@@ -428,7 +433,7 @@ export class PicrossShape {
 
     public reset(): void {
         for (const { idx: at } of this.edits_history) {
-            this.cells.setAtIdx(at, CellState.blank);
+            this._cells.setAtIdx(at, CellState.blank);
         }
 
         this.edits_history = [];
@@ -445,7 +450,7 @@ export class PicrossShape {
     public toJSON(): ShapeJSON {
         return {
             dims: [...this.dims],
-            cells: [...this.cells.data]
+            cells: [...this._cells.data]
         };
     }
 

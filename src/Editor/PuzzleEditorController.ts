@@ -26,15 +26,17 @@ export class PuzzleEditorController extends PicrossController {
         this.file_selector.type = 'file';
         this.file_selector.accept = '.obj,.json';
 
-        this.file_selector.addEventListener('change', () => {
+        this.file_selector.addEventListener('change', async () => {
             const model = this.file_selector.files[0];
             if (model !== undefined) {
                 const uri = window.URL.createObjectURL(model);
                 if (model.type === 'application/json') {
-                    this.loadJsonPuzzle(uri);
+                    await this.loadJsonPuzzle(uri);
                 } else {
-                    this.loadModel(uri);
+                    await this.loadModel(uri);
                 }
+
+                this.renderer.needsReRender();
             }
         });
     }
@@ -64,10 +66,9 @@ export class PuzzleEditorController extends PicrossController {
         }
     }
 
-    private loadModel(uri: string): void {
-        ModelVoxelizer.load(uri, this.shape).then(() => {
-            this.cells.updateAllCells();
-        });
+    private async loadModel(uri: string) {
+        await ModelVoxelizer.load(uri, this.shape);
+        this.cells.updateAllCells();
     }
 
     public reset(): void {

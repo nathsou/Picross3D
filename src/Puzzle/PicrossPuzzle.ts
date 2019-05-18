@@ -167,7 +167,8 @@ export class PicrossPuzzle extends EventEmitter<PicrossPuzzleEventName> {
     }
 
     public isSolvable(): boolean {
-        return PicrossSolver.hierarchicalSolve(this) !== null;
+        // return PicrossSolver.hierarchicalSolve(this) !== null;
+        return PicrossSolver.bruteForceSolve(this) !== null;
     }
 
     public static cellCountToHint(seq: number[]): LineHint {

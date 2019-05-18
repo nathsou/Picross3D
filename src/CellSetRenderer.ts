@@ -6,7 +6,7 @@ export abstract class CellSetRenderer {
     protected _scene: Scene;
     protected _camera: PerspectiveCamera;
     protected _three_renderer: WebGLRenderer;
-    protected needs_rerender = true;
+    protected _needs_rerender = true;
 
     constructor(canvas: HTMLCanvasElement) {
         this._scene = new Scene();
@@ -44,13 +44,13 @@ export abstract class CellSetRenderer {
     public abstract getCellMaterials(i: number, j: number, k: number, state: CellState): Material[];
 
     public needsReRender(): void {
-        this.needs_rerender = true;
+        this._needs_rerender = true;
     }
 
     public render(): boolean {
-        if (this.needs_rerender) {
+        if (this._needs_rerender) {
             this._three_renderer.render(this._scene, this._camera);
-            this.needs_rerender = false;
+            this._needs_rerender = false;
             return true;
         }
 

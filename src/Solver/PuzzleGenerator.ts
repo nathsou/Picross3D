@@ -15,7 +15,7 @@ export namespace PuzzleGenerator {
     export function getInformativeHints(
         puzzle: PicrossPuzzle,
         removed_hints?: Set<number>
-    ): IndexedLineCoords[] {
+    ): InfoLineCoords[] {
 
         const hints = [];
         let idx = 0;
@@ -29,7 +29,7 @@ export namespace PuzzleGenerator {
                             const state = puzzle.shape.getLine(x, y, d);
                             const info = PicrossSolver.lineSolve(hint, state);
                             if (info && (info.blocks.length !== 0 || info.blanks.length !== 0)) {
-                                hints.push({ x, y, d, idx });
+                                hints.push({ x, y, d, idx, hint });
                             }
                         }
                     }
@@ -52,6 +52,18 @@ export namespace PuzzleGenerator {
         idx += x * dims[coord_y[d]] + y;
 
         return idx;
+    }
+
+    export function idxToCoords(idx: number, d: number, dims: number[]): { x: number, y: number, d: number } {
+
+        for (let _d = 0; d < d; _d++) {
+            idx -= dims[coord_x[_d]] * dims[coord_y[_d]];
+        }
+
+        const x = Math.floor(idx / dims[coord_y[d]]);
+        const y = idx % dims[coord_y[d]];
+
+        return { x, y, d };
     }
 
     // a.k.a lines to which this cell belongs(1 by direction)

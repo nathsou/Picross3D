@@ -30,7 +30,7 @@ export class LineHandleManager extends EventEmitter<LineHandleManagerEventName> 
 
         // planes
 
-        // Plane, that helps to determinate an intersection position
+        // Plane to find an intersection with the mouse
         const row_plane = new Mesh(
             new PlaneBufferGeometry(dims[0], dims[1], 1, 1),
             new MeshBasicMaterial({ color: 0xff0000, wireframe: true, visible: false, side: DoubleSide })
