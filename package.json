@@ -42,7 +42,7 @@
     "react-redux": "^7.0.3",
     "redux": "^4.0.1",
     "style-loader": "^0.23.1",
-    "three": "^0.104.0",
+    "three": "^0.137.0",
     "ts-jest": "^24.0.0",
     "typescript": "^3.4.5",
     "webpack": "^4.29.6",
